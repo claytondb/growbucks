@@ -38,7 +38,7 @@ export default function LandingPage() {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#2ECC71]/10 rounded-full text-[#27AE60] text-sm font-medium mb-6">
               <Sparkles className="w-4 h-4" />
-              Watch money grow in real-time!
+              A teaching tool for families — no real money stored!
             </div>
             
             <h1 className="text-4xl md:text-6xl font-extrabold text-[#2C3E50] leading-tight mb-6">
@@ -47,8 +47,9 @@ export default function LandingPage() {
             </h1>
             
             <p className="text-lg md:text-xl text-[#7F8C8D] max-w-2xl mx-auto mb-8">
-              GrowBucks is a family banking app where kids deposit real money and watch it grow with compound interest. 
-              Make saving exciting!
+              GrowBucks helps parents teach kids about compound interest. 
+              You "bank" your child's allowance and they watch it grow daily. 
+              <span className="text-[#2C3E50] font-medium">No real money enters the app — you're the bank!</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
@@ -123,28 +124,28 @@ export default function LandingPage() {
             How It Works
           </h2>
           <p className="text-center text-[#7F8C8D] mb-12 max-w-2xl mx-auto">
-            Turn allowance into a learning experience. Kids get excited about saving 
-            when they can see their money grow every single day.
+            Turn allowance into a learning experience. <strong className="text-[#2C3E50]">You keep the real money</strong> — 
+            kids see virtual GrowBucks that grow daily, teaching them compound interest is magical!
           </p>
 
           <div className="grid md:grid-cols-3 gap-8">
             {[
               {
                 icon: PiggyBank,
-                title: '1. Deposit Money',
-                description: 'When your child gives you cash, add it to their GrowBucks account. They\'re giving you real money to "bank" for them.',
+                title: '1. Add GrowBucks',
+                description: 'When your child earns allowance, add GrowBucks to their account. You keep the real cash — you\'re their bank!',
                 color: '#F1C40F',
               },
               {
                 icon: TrendingUp,
                 title: '2. Watch It Grow',
-                description: 'Set an interest rate (up to 5%/day!) and watch the balance increase in real-time. Kids love seeing the numbers tick up!',
+                description: 'Set an interest rate (default 1%/day) and watch their balance grow in real-time. Kids love seeing the numbers tick up!',
                 color: '#2ECC71',
               },
               {
                 icon: Sparkles,
-                title: '3. Learn & Save',
-                description: 'Kids learn that saving pays off. When they want to withdraw, they see exactly how much future interest they\'d miss.',
+                title: '3. Cash Out Anytime',
+                description: 'When they want to spend, they withdraw GrowBucks and you give them real money. They\'ll see what they\'re giving up!',
                 color: '#3498DB',
               },
             ].map((item, index) => (

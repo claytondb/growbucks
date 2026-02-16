@@ -22,6 +22,7 @@ import GrowthChart from '@/components/charts/GrowthChart';
 import TransactionList from '@/components/TransactionList';
 import DepositModal from '@/components/modals/DepositModal';
 import WithdrawModal from '@/components/modals/WithdrawModal';
+import Wallet from '@/components/Wallet';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { Child, Transaction } from '@/types/database';
 
@@ -188,43 +189,43 @@ export default function ChildDetailPage() {
       </header>
 
       <main className="max-w-3xl mx-auto px-4 py-6">
-        {/* Balance Card */}
+        {/* Visual Wallet */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          className="mb-6"
         >
-          <Card className="mb-6 overflow-hidden">
-            <div className="bg-gradient-to-br from-[#2ECC71] to-[#27AE60] p-6 text-white">
-              <p className="text-sm opacity-80 mb-1">Current Balance</p>
-              <motion.div
-                key={Math.floor(displayBalance)}
-                initial={{ scale: 1.02 }}
-                animate={{ scale: 1 }}
-                className="text-4xl md:text-5xl font-mono font-bold"
-              >
-                {formatMoney(Math.floor(displayBalance))}
-                <span className="text-2xl opacity-80">
-                  .{String(Math.floor((displayBalance % 1) * 100)).padStart(2, '0')}
-                </span>
-              </motion.div>
-              {!child.interest_paused && (
-                <p className="text-sm mt-2 opacity-80 flex items-center gap-1">
-                  <Sparkles className="w-4 h-4" />
-                  Growing in real-time...
-                </p>
-              )}
-            </div>
+          <Wallet
+            balanceCents={child.balance_cents}
+            lockedPercentage={child.locked_percentage || 0}
+            interestRate={child.interest_rate_daily}
+            lastInterestAt={new Date(child.last_interest_at)}
+            isPaused={child.interest_paused}
+            onWithdraw={async (amountCents) => {
+              await handleWithdraw({ amount_cents: amountCents, description: 'Quick withdrawal from wallet' });
+            }}
+            isParent={true}
+          />
+        </motion.div>
+
+        {/* Interest Stats */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+        >
+          <Card className="mb-6">
             <CardContent className="pt-4">
               <div className="grid grid-cols-2 gap-4">
-                <div>
+                <div className="text-center p-3 bg-[#F39C12]/10 rounded-xl">
                   <p className="text-sm text-[#7F8C8D]">Today&apos;s Interest</p>
-                  <p className="text-lg font-mono font-bold text-[#F39C12]">
+                  <p className="text-xl font-mono font-bold text-[#F39C12]">
                     +{formatMoney(child.interest_earned_today)}
                   </p>
                 </div>
-                <div>
+                <div className="text-center p-3 bg-[#27AE60]/10 rounded-xl">
                   <p className="text-sm text-[#7F8C8D]">This Month</p>
-                  <p className="text-lg font-mono font-bold text-[#27AE60]">
+                  <p className="text-xl font-mono font-bold text-[#27AE60]">
                     +{formatMoney(child.interest_earned_this_month)}
                   </p>
                 </div>

@@ -24,6 +24,7 @@ export interface Child {
   balance_cents: number;
   interest_rate_daily: number; // e.g., 0.01 for 1%
   interest_paused: boolean;
+  locked_percentage: number; // 0-100, percentage of balance that can't be withdrawn
   last_interest_at: string;
   created_at: string;
   updated_at: string;

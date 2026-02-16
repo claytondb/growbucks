@@ -3,13 +3,27 @@
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { Sun, Moon, Monitor, Palette } from 'lucide-react';
+import { motion } from 'framer-motion';
+import { Sun, Moon, Monitor, Palette, Check, Sparkles } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+
+type Theme = 'light' | 'dark' | 'system';
+type AccentColor = 'green' | 'blue' | 'purple' | 'orange' | 'pink';
+
+const accentColors: { id: AccentColor; name: string; color: string; gradient: string }[] = [
+  { id: 'green', name: 'Sprout Green', color: '#2ECC71', gradient: 'from-[#2ECC71] to-[#27AE60]' },
+  { id: 'blue', name: 'Sky Blue', color: '#3498DB', gradient: 'from-[#3498DB] to-[#2980B9]' },
+  { id: 'purple', name: 'Royal Purple', color: '#9B59B6', gradient: 'from-[#9B59B6] to-[#8E44AD]' },
+  { id: 'orange', name: 'Sunset Orange', color: '#F39C12', gradient: 'from-[#F39C12] to-[#E67E22]' },
+  { id: 'pink', name: 'Blossom Pink', color: '#E91E63', gradient: 'from-[#E91E63] to-[#C2185B]' },
+];
 
 export default function AppearancePage() {
   const { status } = useSession();
   const router = useRouter();
-  const [theme, setTheme] = useState('light');
-  const [accentColor, setAccentColor] = useState('green');
+  const [theme, setTheme] = useState<Theme>('light');
+  const [accent, setAccent] = useState<AccentColor>('green');
+  const [animations, setAnimations] = useState(true);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -20,86 +34,183 @@ export default function AppearancePage() {
   if (status === 'loading') {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <div className="animate-spin text-4xl">🌱</div>
+        <div className="animate-spin w-8 h-8 border-4 border-[#2ECC71] border-t-transparent rounded-full" />
       </div>
     );
   }
 
-  const themes = [
-    { id: 'light', name: 'Light', icon: Sun, description: 'Bright and cheerful' },
-    { id: 'dark', name: 'Dark', icon: Moon, description: 'Easy on the eyes' },
-    { id: 'system', name: 'System', icon: Monitor, description: 'Match your device' },
-  ];
-
-  const colors = [
-    { id: 'green', name: 'Sprout Green', color: '#2ECC71' },
-    { id: 'blue', name: 'Sky Blue', color: '#3498DB' },
-    { id: 'purple', name: 'Royal Purple', color: '#9B59B6' },
-    { id: 'orange', name: 'Sunset Orange', color: '#E67E22' },
-  ];
-
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-3xl font-bold mb-6" style={{ color: 'var(--midnight)' }}>
-        Appearance 🎨
-      </h1>
+    <div className="max-w-2xl mx-auto px-4 py-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+      >
+        <h1 className="text-2xl font-bold text-[#2C3E50] mb-2">Appearance</h1>
+        <p className="text-[#7F8C8D] mb-6">Customize how GrowBucks looks</p>
 
-      <div className="card mb-6">
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--midnight)' }}>
-          <Sun className="w-5 h-5" /> Theme
-        </h2>
-        
-        <div className="grid grid-cols-3 gap-3">
-          {themes.map((t) => {
-            const Icon = t.icon;
-            return (
+        {/* Theme Selection */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Palette className="w-5 h-5 text-[#2ECC71]" />
+              Theme
+            </CardTitle>
+            <CardDescription>Choose your preferred color scheme</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-3 gap-3">
+              {[
+                { id: 'light' as Theme, icon: Sun, label: 'Light', desc: 'Bright & cheerful' },
+                { id: 'dark' as Theme, icon: Moon, label: 'Dark', desc: 'Easy on the eyes' },
+                { id: 'system' as Theme, icon: Monitor, label: 'System', desc: 'Match device' },
+              ].map((option) => (
+                <button
+                  key={option.id}
+                  onClick={() => setTheme(option.id)}
+                  className={`relative p-4 rounded-xl border-2 transition-all ${
+                    theme === option.id
+                      ? 'border-[#2ECC71] bg-[#2ECC71]/5'
+                      : 'border-[#ECF0F1] hover:border-[#BDC3C7]'
+                  }`}
+                >
+                  {theme === option.id && (
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-[#2ECC71] rounded-full flex items-center justify-center">
+                      <Check className="w-3 h-3 text-white" />
+                    </div>
+                  )}
+                  <option.icon className={`w-8 h-8 mx-auto mb-2 ${
+                    theme === option.id ? 'text-[#2ECC71]' : 'text-[#7F8C8D]'
+                  }`} />
+                  <p className="font-medium text-[#2C3E50] text-center">{option.label}</p>
+                  <p className="text-xs text-[#7F8C8D] text-center">{option.desc}</p>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Accent Color */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Accent Color</CardTitle>
+            <CardDescription>Pick your favorite color for highlights</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex flex-wrap gap-3">
+              {accentColors.map((color) => (
+                <button
+                  key={color.id}
+                  onClick={() => setAccent(color.id)}
+                  className={`relative group`}
+                >
+                  <div 
+                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${color.gradient} shadow-lg transition-transform ${
+                      accent === color.id ? 'scale-110 ring-2 ring-offset-2 ring-current' : 'hover:scale-105'
+                    }`}
+                    style={{ color: accent === color.id ? color.color : undefined }}
+                  >
+                    {accent === color.id && (
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Check className="w-6 h-6 text-white drop-shadow" />
+                      </div>
+                    )}
+                  </div>
+                  <p className="text-xs text-[#7F8C8D] text-center mt-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    {color.name}
+                  </p>
+                </button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Animations */}
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-lg flex items-center gap-2">
+              <Sparkles className="w-5 h-5 text-[#F39C12]" />
+              Animations
+            </CardTitle>
+            <CardDescription>Control motion and visual effects</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFE] rounded-xl">
+              <div>
+                <p className="font-medium text-[#2C3E50]">Enable Animations</p>
+                <p className="text-sm text-[#7F8C8D]">Smooth transitions and effects</p>
+              </div>
               <button
-                key={t.id}
-                onClick={() => setTheme(t.id)}
-                className={`p-4 rounded-xl border-2 transition-all ${
-                  theme === t.id 
-                    ? 'border-green-500 bg-green-50' 
-                    : 'border-gray-200 hover:border-gray-300'
+                onClick={() => setAnimations(!animations)}
+                className={`w-12 h-6 rounded-full transition-colors ${
+                  animations ? 'bg-[#2ECC71]' : 'bg-[#BDC3C7]'
                 }`}
               >
-                <Icon className="w-8 h-8 mx-auto mb-2" style={{ color: theme === t.id ? 'var(--sprout-green)' : 'var(--slate)' }} />
-                <p className="font-medium text-sm" style={{ color: 'var(--midnight)' }}>{t.name}</p>
-                <p className="text-xs" style={{ color: 'var(--slate)' }}>{t.description}</p>
+                <div 
+                  className={`w-5 h-5 bg-white rounded-full shadow transition-transform ${
+                    animations ? 'translate-x-6' : 'translate-x-0.5'
+                  }`}
+                />
               </button>
-            );
-          })}
-        </div>
-      </div>
+            </div>
 
-      <div className="card">
-        <h2 className="text-lg font-bold mb-4 flex items-center gap-2" style={{ color: 'var(--midnight)' }}>
-          <Palette className="w-5 h-5" /> Accent Color
-        </h2>
-        
-        <div className="grid grid-cols-4 gap-3">
-          {colors.map((c) => (
-            <button
-              key={c.id}
-              onClick={() => setAccentColor(c.id)}
-              className={`p-3 rounded-xl border-2 transition-all ${
-                accentColor === c.id 
-                  ? 'border-gray-800' 
-                  : 'border-transparent hover:border-gray-200'
-              }`}
-            >
-              <div 
-                className="w-10 h-10 rounded-full mx-auto mb-2"
-                style={{ background: c.color }}
-              />
-              <p className="text-xs font-medium" style={{ color: 'var(--midnight)' }}>{c.name}</p>
-            </button>
-          ))}
-        </div>
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFE] rounded-xl">
+              <div>
+                <p className="font-medium text-[#2C3E50]">Celebration Effects</p>
+                <p className="text-sm text-[#7F8C8D]">Confetti on deposits and achievements</p>
+              </div>
+              <button
+                className="w-12 h-6 rounded-full bg-[#2ECC71]"
+              >
+                <div className="w-5 h-5 bg-white rounded-full shadow translate-x-6" />
+              </button>
+            </div>
 
-        <p className="text-sm mt-4" style={{ color: 'var(--slate)' }}>
-          🚧 Theme customization coming soon!
-        </p>
-      </div>
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFE] rounded-xl">
+              <div>
+                <p className="font-medium text-[#2C3E50]">Growing Balance Animation</p>
+                <p className="text-sm text-[#7F8C8D]">See numbers tick up in real-time</p>
+              </div>
+              <button
+                className="w-12 h-6 rounded-full bg-[#2ECC71]"
+              >
+                <div className="w-5 h-5 bg-white rounded-full shadow translate-x-6" />
+              </button>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Preview */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-lg">Preview</CardTitle>
+            <CardDescription>See how your choices look</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="p-6 bg-gradient-to-br from-white to-[#F8FAFE] rounded-xl border border-[#ECF0F1]">
+              <div className="flex items-center gap-3 mb-4">
+                <div 
+                  className={`w-10 h-10 rounded-xl bg-gradient-to-br ${
+                    accentColors.find(c => c.id === accent)?.gradient
+                  } flex items-center justify-center`}
+                >
+                  <span className="text-white font-bold">E</span>
+                </div>
+                <div>
+                  <p className="font-bold text-[#2C3E50]">Emma&apos;s Garden</p>
+                  <p className="text-sm" style={{ color: accentColors.find(c => c.id === accent)?.color }}>
+                    Growing at 1%/day
+                  </p>
+                </div>
+              </div>
+              <div className="text-center py-4">
+                <p className="text-3xl font-mono font-bold" style={{ color: accentColors.find(c => c.id === accent)?.color }}>
+                  $147.23
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </motion.div>
     </div>
   );
 }
