@@ -1,0 +1,217 @@
+@import "tailwindcss";
+
+/* GrowBucks Design System Variables */
+:root {
+  /* Brand Colors */
+  --sprout-green: #2ECC71;
+  --leaf-green: #27AE60;
+  --sky-blue: #3498DB;
+  --ocean-blue: #2980B9;
+  --sunny-gold: #F1C40F;
+  --warm-amber: #F39C12;
+  
+  /* Semantic Colors */
+  --success: #27AE60;
+  --warning: #E67E22;
+  --error: #E74C3C;
+  --info: #3498DB;
+  
+  /* Neutrals */
+  --midnight: #2C3E50;
+  --slate: #7F8C8D;
+  --silver: #BDC3C7;
+  --cloud: #ECF0F1;
+  --snow: #F8FAFE;
+  --white: #FFFFFF;
+  
+  /* Typography */
+  --font-heading: 'Nunito', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+  --font-mono: 'DM Mono', monospace;
+  
+  /* Animation */
+  --ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --ease-smooth: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  --duration-fast: 150ms;
+  --duration-normal: 250ms;
+  --duration-slow: 400ms;
+  
+  /* Gradients */
+  --gradient-growth: linear-gradient(135deg, #2ECC71 0%, #27AE60 50%, #F1C40F 100%);
+  --gradient-trust: linear-gradient(135deg, #3498DB 0%, #2ECC71 100%);
+  --gradient-coin: linear-gradient(135deg, #F1C40F 0%, #F39C12 50%, #F1C40F 100%);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+html {
+  font-size: 16px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  color: var(--midnight);
+  background-color: var(--snow);
+  line-height: 1.5;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+/* Money Display */
+.font-money {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.02em;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--cloud);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--silver);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--slate);
+}
+
+/* Focus styles */
+*:focus-visible {
+  outline: 3px solid var(--sky-blue);
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background-color: var(--sprout-green);
+  color: white;
+}
+
+/* Animations */
+@keyframes coin-drop {
+  0% { transform: translateY(-50px) scale(1); opacity: 0; }
+  60% { transform: translateY(0) scale(1); opacity: 1; }
+  75% { transform: translateY(-5px) scale(1.1, 0.9); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes number-glow {
+  0% { text-shadow: 0 0 0 rgba(46, 204, 113, 0); }
+  50% { text-shadow: 0 0 20px rgba(46, 204, 113, 0.5); }
+  100% { text-shadow: 0 0 0 rgba(46, 204, 113, 0); }
+}
+
+@keyframes float-up-fade {
+  0% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-30px); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+@keyframes pulse-green {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+}
+
+@keyframes confetti {
+  0% { transform: translateY(0) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
+}
+
+.animate-coin-drop {
+  animation: coin-drop 0.5s var(--ease-spring);
+}
+
+.animate-number-glow {
+  animation: number-glow 1s ease-in-out;
+}
+
+.animate-float-up {
+  animation: float-up-fade 1s ease-out forwards;
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg, var(--cloud) 0%, var(--silver) 50%, var(--cloud) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+.animate-pulse-green {
+  animation: pulse-green 2s infinite;
+}
+
+/* Skeleton loading */
+.skeleton {
+  background: linear-gradient(90deg, var(--cloud) 0%, var(--silver) 50%, var(--cloud) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  border-radius: 8px;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Mobile safe area */
+.safe-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+}
+
+.safe-top {
+  padding-top: env(safe-area-inset-top, 0);
+}
+
+/* Gradient text */
+.text-gradient {
+  background: var(--gradient-growth);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Number input - hide spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Touch highlight */
+@media (hover: none) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
