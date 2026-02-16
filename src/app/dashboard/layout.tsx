@@ -10,7 +10,7 @@ const navItems = [
   { href: '/dashboard/growth', icon: BarChart3, label: 'Growth' },
   { href: '/dashboard/add', icon: PlusCircle, label: 'Add', isCenter: true },
   { href: '/dashboard/goals', icon: Target, label: 'Goals' },
-  { href: '/settings', icon: User, label: 'Profile' },
+  { href: '/dashboard/settings', icon: User, label: 'Profile' },
 ];
 
 export default function DashboardLayout({
