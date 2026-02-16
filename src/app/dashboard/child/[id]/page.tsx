@@ -179,7 +179,7 @@ export default function ChildDetailPage() {
                 </div>
               </div>
             </div>
-            <Link href={`/child/${childId}/settings`}>
+            <Link href={`/dashboard/child/${childId}/settings`}>
               <Button variant="ghost" size="icon">
                 <Settings className="w-5 h-5" />
               </Button>

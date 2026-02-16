@@ -41,7 +41,7 @@ export default function ChildCard({ child, interestEarnedThisMonth = 0 }: ChildC
     : '0.0';
 
   return (
-    <Link href={`/child/${child.id}`}>
+    <Link href={`/dashboard/child/${child.id}`}>
       <GradientCard interactive className="group">
         <div className="flex items-start gap-4">
           {/* Avatar */}
