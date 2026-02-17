@@ -23,6 +23,8 @@ import TransactionList from '@/components/TransactionList';
 import DepositModal from '@/components/modals/DepositModal';
 import WithdrawModal from '@/components/modals/WithdrawModal';
 import Wallet from '@/components/Wallet';
+import ExportMenu from '@/components/ExportMenu';
+import { CelebrationOverlay } from '@/components/Confetti';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { Child, Transaction } from '@/types/database';
 
@@ -43,6 +45,8 @@ export default function ChildDetailPage() {
   const [displayBalance, setDisplayBalance] = useState(0);
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationMessage, setCelebrationMessage] = useState({ title: '', message: '' });
 
   const fetchChild = useCallback(async () => {
     try {
@@ -90,6 +94,8 @@ export default function ChildDetailPage() {
   }, [child]);
 
   const handleDeposit = async (data: { amount_cents: number; description?: string }) => {
+    const oldBalance = child?.balance_cents || 0;
+    
     const res = await fetch('/api/transactions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -105,6 +111,23 @@ export default function ChildDetailPage() {
     }
 
     await fetchChild();
+    
+    // Check for milestone celebrations
+    const newBalance = oldBalance + data.amount_cents;
+    const milestones = [
+      { amount: 10000, title: 'Century Saver! 💯', message: `${child?.name} just hit $100 in savings!` },
+      { amount: 5000, title: 'Halfway Hero! 🌟', message: `Amazing! ${child?.name} has saved $50!` },
+      { amount: 1000, title: 'Double Digits! 💵', message: `${child?.name} reached $10 in savings!` },
+      { amount: 100, title: 'First GrowBuck! 🌱', message: `${child?.name} started their savings journey!` },
+    ];
+    
+    for (const milestone of milestones) {
+      if (oldBalance < milestone.amount && newBalance >= milestone.amount) {
+        setCelebrationMessage({ title: milestone.title, message: milestone.message });
+        setShowCelebration(true);
+        break;
+      }
+    }
   };
 
   const handleWithdraw = async (data: { amount_cents: number; description?: string }) => {
@@ -306,8 +329,14 @@ export default function ChildDetailPage() {
           transition={{ delay: 0.3 }}
         >
           <Card>
-            <CardHeader>
+            <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle>Transaction History</CardTitle>
+              {child.transactions.length > 0 && (
+                <ExportMenu
+                  childName={child.name}
+                  transactions={child.transactions}
+                />
+              )}
             </CardHeader>
             <CardContent>
               <TransactionList
@@ -318,6 +347,15 @@ export default function ChildDetailPage() {
           </Card>
         </motion.div>
       </main>
+
+      {/* Celebration Overlay */}
+      <CelebrationOverlay
+        show={showCelebration}
+        onClose={() => setShowCelebration(false)}
+        title={celebrationMessage.title}
+        message={celebrationMessage.message}
+        emoji="🏆"
+      />
 
       {/* Modals */}
       <DepositModal

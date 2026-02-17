@@ -17,6 +17,8 @@ import { Transaction } from '@/types/database';
 interface GrowthChartProps {
   transactions: Transaction[];
   currentBalance: number;
+  interestRate?: number; // Daily rate for projections
+  showProjection?: boolean;
   className?: string;
 }
 
