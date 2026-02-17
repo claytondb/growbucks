@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
-import { supabase } from '@/lib/supabase';
+import { createServerSupabaseClient } from '@/lib/supabase';
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const getSupabase = () => createServerSupabaseClient() as any;
 
 // GET /api/goals - List all goals for the user's children
 export async function GET(request: NextRequest) {
@@ -12,11 +15,24 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const supabase = getSupabase();
+
+    // Get user ID from email (consistent with children API)
+    const { data: user } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', session.user.email!)
+      .single();
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     // Get all children for this user
-    const { data: children, error: childrenError } = await (supabase as any)
+    const { data: children, error: childrenError } = await supabase
       .from('children')
       .select('id, name, balance_cents')
-      .eq('user_id', session.user.id);
+      .eq('user_id', user.id);
 
     if (childrenError) {
       console.error('Error fetching children:', childrenError);
@@ -33,7 +49,7 @@ export async function GET(request: NextRequest) {
     );
 
     // Get all goals for these children
-    const { data: goals, error: goalsError } = await (supabase as any)
+    const { data: goals, error: goalsError } = await supabase
       .from('savings_goals')
       .select('*')
       .in('child_id', childIds)
@@ -71,6 +87,19 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const supabase = getSupabase();
+
+    // Get user ID from email (consistent with children API)
+    const { data: user } = await supabase
+      .from('users')
+      .select('id')
+      .eq('email', session.user.email!)
+      .single();
+
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
+    }
+
     const body = await request.json();
     const { child_id, name, target_cents, target_date, emoji } = body;
 
@@ -79,11 +108,11 @@ export async function POST(request: NextRequest) {
     }
 
     // Verify child belongs to user
-    const { data: child, error: childError } = await (supabase as any)
+    const { data: child, error: childError } = await supabase
       .from('children')
       .select('id')
       .eq('id', child_id)
-      .eq('user_id', session.user.id)
+      .eq('user_id', user.id)
       .single();
 
     if (childError || !child) {
@@ -91,7 +120,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Create the goal
-    const { data: goal, error: goalError } = await (supabase as any)
+    const { data: goal, error: goalError } = await supabase
       .from('savings_goals')
       .insert({
         child_id,
