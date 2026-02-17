@@ -67,6 +67,37 @@ export interface SavingsGoal {
   created_at: string;
 }
 
+// Achievement stored in database
+export interface ChildAchievement {
+  id: string;
+  child_id: string;
+  achievement_id: string;
+  unlocked_at: string;
+  notified: boolean;
+}
+
+// In-app notification
+export interface Notification {
+  id: string;
+  user_id: string;
+  child_id: string | null;
+  type: 'interest' | 'deposit' | 'withdrawal' | 'goal' | 'achievement' | 'milestone';
+  title: string;
+  message: string;
+  emoji: string | null;
+  amount_cents: number | null;
+  read_at: string | null;
+  created_at: string;
+}
+
+// Child activity for streak tracking
+export interface ChildActivity {
+  id: string;
+  child_id: string;
+  activity_date: string;
+  login_count: number;
+}
+
 // Frontend-friendly types (with computed properties)
 export interface ChildWithStats extends Child {
   interest_earned_today: number;
@@ -144,6 +175,21 @@ export interface Database {
         Row: SavingsGoal;
         Insert: Omit<SavingsGoal, 'id' | 'created_at'>;
         Update: Partial<Omit<SavingsGoal, 'id'>>;
+      };
+      achievements: {
+        Row: ChildAchievement;
+        Insert: Omit<ChildAchievement, 'id' | 'unlocked_at'>;
+        Update: Partial<Omit<ChildAchievement, 'id'>>;
+      };
+      notifications: {
+        Row: Notification;
+        Insert: Omit<Notification, 'id' | 'created_at'>;
+        Update: Partial<Omit<Notification, 'id'>>;
+      };
+      child_activity: {
+        Row: ChildActivity;
+        Insert: Omit<ChildActivity, 'id'>;
+        Update: Partial<Omit<ChildActivity, 'id'>>;
       };
     };
   };

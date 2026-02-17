@@ -327,7 +327,7 @@ export function AchievementsGrid({ achievements, className }: AchievementsGridPr
                   {category.name}
                 </h3>
               </div>
-              <div className="grid grid-cols-4 gap-4">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-3 sm:gap-4">
                 {categoryAchievements.map((achievement) => (
                   <AchievementBadge
                     key={achievement.id}

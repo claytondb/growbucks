@@ -72,11 +72,11 @@ export default function ChildCard({ child, interestEarnedThisMonth = 0 }: ChildC
               </span>
             </motion.div>
 
-            {/* Growth indicator */}
-            <div className="flex items-center gap-4 mt-2">
+            {/* Growth indicator - stacks on mobile */}
+            <div className="flex flex-col xs:flex-row xs:items-center gap-1 xs:gap-4 mt-2">
               <div className="flex items-center gap-1 text-sm">
-                <TrendingUp className="w-4 h-4 text-[#27AE60]" />
-                <span className="text-[#27AE60] font-medium">
+                <TrendingUp className="w-4 h-4 text-[#27AE60] flex-shrink-0" />
+                <span className="text-[#27AE60] font-medium whitespace-nowrap">
                   {formatMoney(interestEarnedThisMonth, { showSign: true })} this month
                 </span>
               </div>

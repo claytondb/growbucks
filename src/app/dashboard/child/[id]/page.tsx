@@ -25,6 +25,8 @@ import WithdrawModal from '@/components/modals/WithdrawModal';
 import Wallet from '@/components/Wallet';
 import ExportMenu from '@/components/ExportMenu';
 import { CelebrationOverlay } from '@/components/Confetti';
+import { AchievementsGrid, calculateAchievements } from '@/components/Achievements';
+import FunFactCard from '@/components/FunFacts';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { Child, Transaction } from '@/types/database';
 
@@ -32,6 +34,11 @@ interface ChildWithDetails extends Child {
   transactions: Transaction[];
   interest_earned_today: number;
   interest_earned_this_month: number;
+  total_interest_earned?: number;
+  goals_created?: number;
+  goals_achieved?: number;
+  days_since_last_withdraw?: number;
+  days_active?: number;
 }
 
 export default function ChildDetailPage() {
@@ -257,50 +264,50 @@ export default function ChildDetailPage() {
           </Card>
         </motion.div>
 
-        {/* Action Buttons */}
+        {/* Action Buttons - mobile optimized */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="grid grid-cols-3 gap-3 mb-6"
+          className="grid grid-cols-3 gap-2 sm:gap-3 mb-6"
         >
           <Button
             variant="deposit"
-            className="h-auto py-4 flex-col"
+            className="h-auto py-3 sm:py-4 flex-col text-sm sm:text-base"
             onClick={() => setDepositOpen(true)}
           >
-            <Plus className="w-6 h-6 mb-1" />
+            <Plus className="w-5 h-5 sm:w-6 sm:h-6 mb-1" />
             <span>Deposit</span>
           </Button>
           <Button
             variant="withdraw"
-            className="h-auto py-4 flex-col"
+            className="h-auto py-3 sm:py-4 flex-col text-sm sm:text-base"
             onClick={() => setWithdrawOpen(true)}
             disabled={child.balance_cents <= 0}
           >
-            <Minus className="w-6 h-6 mb-1" />
+            <Minus className="w-5 h-5 sm:w-6 sm:h-6 mb-1" />
             <span>Withdraw</span>
           </Button>
           <Button
             variant="secondary"
-            className="h-auto py-4 flex-col"
+            className="h-auto py-3 sm:py-4 flex-col text-sm sm:text-base"
             onClick={toggleInterestPause}
           >
             {child.interest_paused ? (
               <>
-                <Play className="w-6 h-6 mb-1" />
+                <Play className="w-5 h-5 sm:w-6 sm:h-6 mb-1" />
                 <span>Resume</span>
               </>
             ) : (
               <>
-                <Pause className="w-6 h-6 mb-1" />
+                <Pause className="w-5 h-5 sm:w-6 sm:h-6 mb-1" />
                 <span>Pause</span>
               </>
             )}
           </Button>
         </motion.div>
 
-        {/* Growth Chart */}
+        {/* Growth Chart with Projections */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -311,12 +318,51 @@ export default function ChildDetailPage() {
               <CardTitle className="flex items-center gap-2">
                 <TrendingUp className="w-5 h-5 text-[#2ECC71]" />
                 Growth Over Time
+                <span className="text-xs font-normal text-[#9B59B6] bg-[#9B59B6]/10 px-2 py-0.5 rounded-full ml-2">
+                  + Future Projection 🔮
+                </span>
               </CardTitle>
             </CardHeader>
             <CardContent>
               <GrowthChart
                 transactions={child.transactions}
                 currentBalance={child.balance_cents}
+                interestRate={child.interest_rate_daily}
+                showProjection={true}
+                projectionDays={14}
+              />
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Fun Fact */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+          className="mb-6"
+        >
+          <FunFactCard autoRotate={true} rotateInterval={15000} />
+        </motion.div>
+
+        {/* Achievements Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Card className="mb-6">
+            <CardContent className="pt-6">
+              <AchievementsGrid
+                achievements={calculateAchievements({
+                  balanceCents: child.balance_cents,
+                  totalInterestEarned: child.total_interest_earned || 0,
+                  goalsCreated: child.goals_created || 0,
+                  goalsAchieved: child.goals_achieved || 0,
+                  hasEarnedInterest: (child.total_interest_earned || 0) > 0,
+                  daysSinceLastWithdraw: child.days_since_last_withdraw || 0,
+                  daysActive: child.days_active || 1,
+                })}
               />
             </CardContent>
           </Card>
@@ -326,7 +372,7 @@ export default function ChildDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.35 }}
         >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">

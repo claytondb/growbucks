@@ -9,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import ChildCard from '@/components/ChildCard';
 import AddChildModal from '@/components/modals/AddChildModal';
+import FunFactCard from '@/components/FunFacts';
+import { NotificationCenter } from '@/components/InterestNotification';
 import { formatMoney, getGreeting } from '@/lib/utils';
 import { Child } from '@/types/database';
 
@@ -87,10 +89,13 @@ export default function DashboardPage() {
               </h1>
               <p className="text-sm text-[#7F8C8D]">Here&apos;s how your family is doing</p>
             </div>
-            <Button onClick={() => setAddChildOpen(true)}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Child
-            </Button>
+            <div className="flex items-center gap-2">
+              <NotificationCenter />
+              <Button onClick={() => setAddChildOpen(true)}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Child
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -197,22 +202,22 @@ export default function DashboardPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
             >
-              <Card className="text-center py-12">
-                <div className="w-16 h-16 bg-[#ECF0F1] rounded-full mx-auto mb-4 flex items-center justify-center">
-                  <Users className="w-8 h-8 text-[#7F8C8D]" />
+              <Card className="text-center py-8 sm:py-12 px-4">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 bg-[#ECF0F1] rounded-full mx-auto mb-4 flex items-center justify-center">
+                  <Users className="w-7 h-7 sm:w-8 sm:h-8 text-[#7F8C8D]" />
                 </div>
-                <h3 className="font-bold text-lg text-[#2C3E50] mb-2">No children yet</h3>
-                <p className="text-[#7F8C8D] mb-6 max-w-sm mx-auto">
+                <h3 className="font-bold text-base sm:text-lg text-[#2C3E50] mb-2">No children yet</h3>
+                <p className="text-sm sm:text-base text-[#7F8C8D] mb-6 max-w-sm mx-auto">
                   Add your first child to start teaching them about saving and compound interest!
                 </p>
-                <Button onClick={() => setAddChildOpen(true)}>
+                <Button onClick={() => setAddChildOpen(true)} className="w-full sm:w-auto">
                   <Plus className="w-4 h-4 mr-2" />
                   Add Your First Child
                 </Button>
               </Card>
             </motion.div>
           ) : (
-            <div className="grid gap-4 sm:grid-cols-2">
+            <div className="grid gap-3 sm:gap-4 grid-cols-1 sm:grid-cols-2">
               {children.map((child, index) => (
                 <motion.div
                   key={child.id}
@@ -230,20 +235,13 @@ export default function DashboardPage() {
           )}
         </div>
 
-        {/* Quick tip */}
+        {/* Fun Fact */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          <Card className="bg-gradient-to-r from-[#3498DB]/5 to-[#2ECC71]/5">
-            <CardContent className="pt-4">
-              <p className="text-sm text-[#7F8C8D]">
-                💡 <span className="font-medium text-[#2C3E50]">Tip:</span> Kids learn best when they can see their money growing. 
-                Encourage them to check their balance daily!
-              </p>
-            </CardContent>
-          </Card>
+          <FunFactCard autoRotate={true} rotateInterval={20000} />
         </motion.div>
       </main>
 
