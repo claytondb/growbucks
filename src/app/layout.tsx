@@ -24,10 +24,29 @@ const dmMono = DM_Mono({
 export const metadata: Metadata = {
   title: 'GrowBucks - Teach Kids About Compound Interest',
   description: 'A fun way for kids to learn about saving and compound interest. Watch your money grow!',
-  keywords: ['savings', 'kids', 'compound interest', 'financial literacy', 'education'],
+  keywords: ['savings', 'kids', 'compound interest', 'financial literacy', 'education', 'family banking', 'bank of dad'],
   authors: [{ name: 'GrowBucks' }],
   icons: {
     icon: '/favicon.ico',
+    apple: '/icon-192.png',
+  },
+  manifest: '/manifest.json',
+  openGraph: {
+    type: 'website',
+    siteName: 'GrowBucks',
+    title: 'GrowBucks - Teach Kids About Compound Interest',
+    description: 'Turn saving into a game! Kids deposit real money and watch it grow with daily compound interest. The family banking app that teaches financial literacy.',
+    locale: 'en_US',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'GrowBucks - Teach Kids About Compound Interest',
+    description: 'Turn saving into a game! Kids deposit real money and watch it grow with daily compound interest.',
+  },
+  appleWebApp: {
+    capable: true,
+    title: 'GrowBucks',
+    statusBarStyle: 'default',
   },
 };
 
