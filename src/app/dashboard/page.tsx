@@ -18,12 +18,22 @@ interface ChildWithStats extends Child {
   interest_earned_this_month: number;
 }
 
+interface PendingWithdrawal {
+  id: string;
+  childId: string;
+  childName: string;
+  amountCents: number;
+  description: string;
+  requestedAt: string;
+}
+
 export default function DashboardPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [children, setChildren] = useState<ChildWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [addChildOpen, setAddChildOpen] = useState(false);
+  const [pendingWithdrawals, setPendingWithdrawals] = useState<PendingWithdrawal[]>([]);
 
   const fetchChildren = useCallback(async () => {
     try {
@@ -39,13 +49,26 @@ export default function DashboardPage() {
     }
   }, []);
 
+  const fetchPendingWithdrawals = useCallback(async () => {
+    try {
+      const res = await fetch('/api/pending-withdrawals');
+      if (res.ok) {
+        const data = await res.json();
+        setPendingWithdrawals(data.withdrawals || []);
+      }
+    } catch (error) {
+      console.error('Error fetching pending withdrawals:', error);
+    }
+  }, []);
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     } else if (status === 'authenticated') {
       fetchChildren();
+      fetchPendingWithdrawals();
     }
-  }, [status, router, fetchChildren]);
+  }, [status, router, fetchChildren, fetchPendingWithdrawals]);
 
   const handleAddChild = async (data: { name: string; pin: string; interest_rate_daily: number }) => {
     const res = await fetch('/api/children', {
@@ -64,7 +87,6 @@ export default function DashboardPage() {
   // Calculate totals
   const totalBalance = children.reduce((sum, child) => sum + child.balance_cents, 0);
   const totalInterestThisMonth = children.reduce((sum, child) => sum + child.interest_earned_this_month, 0);
-  const pendingWithdrawals = 0; // TODO: Fetch from API
 
   if (status === 'loading' || loading) {
     return (
@@ -171,7 +193,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Pending withdrawals alert */}
-        {pendingWithdrawals > 0 && (
+        {pendingWithdrawals.length > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -182,9 +204,14 @@ export default function DashboardPage() {
                 <div className="flex items-center gap-3">
                   <AlertCircle className="w-5 h-5 text-[#E67E22]" />
                   <p className="text-[#2C3E50]">
-                    You have <span className="font-bold">{pendingWithdrawals}</span> pending withdrawal request(s)
+                    You have <span className="font-bold">{pendingWithdrawals.length}</span> pending withdrawal request{pendingWithdrawals.length !== 1 ? 's' : ''}
                   </p>
-                  <Button variant="secondary" size="sm" className="ml-auto">
+                  <Button 
+                    variant="secondary" 
+                    size="sm" 
+                    className="ml-auto"
+                    onClick={() => router.push('/dashboard/transactions')}
+                  >
                     Review
                   </Button>
                 </div>

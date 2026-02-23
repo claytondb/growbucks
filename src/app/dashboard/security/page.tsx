@@ -25,19 +25,48 @@ export default function SecurityPage() {
 
   const handleChangePassword = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!currentPassword) {
+      alert('Please enter your current password');
+      return;
+    }
+    
     if (newPassword !== confirmPassword) {
       alert('Passwords do not match');
       return;
     }
+    
+    if (newPassword.length < 8) {
+      alert('New password must be at least 8 characters');
+      return;
+    }
+    
     setChangingPassword(true);
-    // TODO: Implement password change API
-    setTimeout(() => {
-      setChangingPassword(false);
+    
+    try {
+      const res = await fetch('/api/auth/change-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ currentPassword, newPassword }),
+      });
+      
+      const data = await res.json();
+      
+      if (!res.ok) {
+        alert(data.error || 'Failed to update password');
+        return;
+      }
+      
       setCurrentPassword('');
       setNewPassword('');
       setConfirmPassword('');
       alert('Password updated successfully!');
-    }, 1000);
+    } catch (error) {
+      console.error('Error changing password:', error);
+      alert('An error occurred. Please try again.');
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   if (status === 'loading') {
