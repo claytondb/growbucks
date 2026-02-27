@@ -124,14 +124,17 @@ See [DESIGN_SYSTEM.md](./DESIGN_SYSTEM.md) for:
 
 | Route | Method | Description |
 |-------|--------|-------------|
-| `/api/children` | GET | List all children |
-| `/api/children` | POST | Create child |
-| `/api/children/[id]` | GET | Get child details |
-| `/api/children/[id]` | PATCH | Update child |
-| `/api/children/[id]` | DELETE | Delete child |
-| `/api/transactions` | POST | Create deposit/withdrawal |
-| `/api/transactions` | PATCH | Approve/reject withdrawal |
-| `/api/calculate-interest` | POST | Run interest calculation |
+| `/api/children` | GET/POST | List all / create child |
+| `/api/children/[id]` | GET/PATCH/DELETE | Child CRUD |
+| `/api/transactions` | POST/PATCH | Create / approve transactions |
+| `/api/pending-withdrawals` | GET | Pending withdrawal requests |
+| `/api/goals` | GET/POST | Savings goals |
+| `/api/notifications` | GET/POST | Notification system |
+| `/api/notification-settings` | GET/PUT | Notification preferences |
+| `/api/calculate-interest` | POST | Daily interest cron |
+| `/api/auth/change-password` | POST | Change parent password |
+
+📚 **Full API documentation:** See [API.md](./API.md) for request/response formats, authentication details, and examples.
 
 ## 🚀 Deployment
 
