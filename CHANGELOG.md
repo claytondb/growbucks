@@ -2,6 +2,14 @@
 
 All notable changes to GrowBucks.
 
+## [1.3.0] - 2026-02-27
+
+### Added
+- **Financial Tip of the Day** - Daily rotating educational tips about saving and compound interest
+  - 20 kid-friendly tips covering patience, needs vs wants, compound interest, and more
+  - Dismissible card on child dashboard
+  - Changes daily to keep content fresh
+
 ## [1.2.0] - 2026-02-23
 
 ### Added

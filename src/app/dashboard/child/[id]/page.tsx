@@ -27,6 +27,7 @@ import ExportMenu from '@/components/ExportMenu';
 import { CelebrationOverlay } from '@/components/Confetti';
 import { AchievementsGrid, calculateAchievements } from '@/components/Achievements';
 import FunFactCard from '@/components/FunFacts';
+import FinancialTip from '@/components/FinancialTip';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { Child, Transaction } from '@/types/database';
 
@@ -335,11 +336,21 @@ export default function ChildDetailPage() {
           </Card>
         </motion.div>
 
-        {/* Fun Fact */}
+        {/* Financial Tip of the Day */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.25 }}
+          className="mb-6"
+        >
+          <FinancialTip dismissible={true} />
+        </motion.div>
+
+        {/* Fun Fact */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.3 }}
           className="mb-6"
         >
           <FunFactCard autoRotate={true} rotateInterval={15000} />
@@ -349,7 +360,7 @@ export default function ChildDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.3 }}
+          transition={{ delay: 0.35 }}
         >
           <Card className="mb-6">
             <CardContent className="pt-6">
@@ -372,7 +383,7 @@ export default function ChildDetailPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.35 }}
+          transition={{ delay: 0.4 }}
         >
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
