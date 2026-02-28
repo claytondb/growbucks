@@ -2,6 +2,11 @@
 
 All notable changes to GrowBucks.
 
+## [1.3.1] - 2026-02-28
+
+### Added
+- **DEPLOYMENT.md** - Comprehensive deployment guide for Vercel + Supabase setup
+
 ## [1.3.0] - 2026-02-27
 
 ### Added
