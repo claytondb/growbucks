@@ -2,6 +2,19 @@
 
 All notable changes to GrowBucks.
 
+## [1.4.0] - 2026-03-04
+
+### Added
+- **Unit Testing Framework** - Vitest test suite with 84 passing tests
+  - `utils.test.ts` (60 tests) - Money formatting, validation, date formatting, interest calculations
+  - `interest.test.ts` (24 tests) - Compound interest, projections, interpolated balances
+  - Full coverage for PIN validation, amount validation, interest rate validation
+  - Time-based tests with mocked system time for reliability
+
+### Infrastructure
+- Added `vitest.config.ts` for test configuration
+- Added `npm test` and `npm test:watch` scripts
+
 ## [1.3.1] - 2026-02-28
 
 ### Added
