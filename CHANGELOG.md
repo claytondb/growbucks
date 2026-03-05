@@ -16,8 +16,9 @@ All notable changes to GrowBucks.
   - 35 new unit tests for recurring deposits logic
 
 ### Infrastructure
-- Tests: 84 → 119 passing tests
+- Tests: 84 → 148 passing tests
 - New utility library: `src/lib/recurring-deposits.ts`
+- Export utilities test coverage: `src/lib/export.test.ts` (29 tests)
 
 ## [1.4.0] - 2026-03-04
 
