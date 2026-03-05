@@ -2,6 +2,23 @@
 
 All notable changes to GrowBucks.
 
+## [1.5.0] - 2026-03-05
+
+### Added
+- **Recurring Deposits** - Automated allowance feature (HIGH priority item!)
+  - Weekly, biweekly, or monthly schedules
+  - Day-of-week selection for weekly/biweekly
+  - Day-of-month selection for monthly (1-28)
+  - Up to 5 recurring deposits per child
+  - API routes: `/api/recurring-deposits` (CRUD) and `/api/recurring-deposits/process` (cron)
+  - Database migration: `004_recurring_deposits.sql`
+  - Utility library with validation functions
+  - 35 new unit tests for recurring deposits logic
+
+### Infrastructure
+- Tests: 84 → 119 passing tests
+- New utility library: `src/lib/recurring-deposits.ts`
+
 ## [1.4.0] - 2026-03-04
 
 ### Added

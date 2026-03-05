@@ -38,12 +38,17 @@ Last updated: 2026-03-05
 - [ ] Email digest option for parents
 - [ ] In-app notification center improvements
 
-### 2. Recurring Deposits
+### 2. Recurring Deposits ✅ DONE (2026-03-05)
 **Priority:** HIGH
 
-- [ ] Weekly allowance auto-deposit
-- [ ] Custom recurring schedules
-- [ ] Parent-controlled automation
+- [x] Weekly allowance auto-deposit
+- [x] Custom recurring schedules (weekly, biweekly, monthly)
+- [x] Parent-controlled automation
+- [x] API routes for CRUD operations
+- [x] Cron-triggerable process endpoint
+- [x] Database migration (004_recurring_deposits.sql)
+- [x] Utility library with validation (recurring-deposits.ts)
+- [x] Unit tests (35 tests)
 
 ### 3. Learning Content
 **Priority:** MEDIUM
@@ -87,6 +92,6 @@ Last updated: 2026-03-05
 
 ## 📊 Stats
 
-- **Version:** 1.4.0
-- **Tests:** 84 passing
+- **Version:** 1.5.0
+- **Tests:** 119 passing
 - **Build:** Clean ✅
