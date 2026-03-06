@@ -2,10 +2,25 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.0] - 2026-03-06
+
+### Added
+- **Allowances UI** - Parent interface for managing recurring deposits
+  - New `/dashboard/allowances` page
+  - Full CRUD interface for creating, editing, and deleting allowances
+  - Visual grouping of allowances by child
+  - Pause/resume toggle for each allowance
+  - Day-of-week picker for weekly/biweekly schedules
+  - Day-of-month picker for monthly schedules
+  - Accessible from Settings → Allowances
+
+### Improved
+- Settings page now links to Allowances management
+
 ## [1.5.0] - 2026-03-05
 
 ### Added
-- **Recurring Deposits** - Automated allowance feature (HIGH priority item!)
+- **Recurring Deposits API** - Backend for automated allowance feature (HIGH priority item!)
   - Weekly, biweekly, or monthly schedules
   - Day-of-week selection for weekly/biweekly
   - Day-of-month selection for monthly (1-28)

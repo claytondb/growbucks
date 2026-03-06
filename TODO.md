@@ -38,7 +38,7 @@ Last updated: 2026-03-05
 - [ ] Email digest option for parents
 - [ ] In-app notification center improvements
 
-### 2. Recurring Deposits ✅ DONE (2026-03-05)
+### 2. Recurring Deposits ✅ DONE (2026-03-06)
 **Priority:** HIGH
 
 - [x] Weekly allowance auto-deposit
@@ -49,6 +49,7 @@ Last updated: 2026-03-05
 - [x] Database migration (004_recurring_deposits.sql)
 - [x] Utility library with validation (recurring-deposits.ts)
 - [x] Unit tests (35 tests)
+- [x] **Parent UI** - `/dashboard/allowances` page (2026-03-06)
 
 ### 3. Learning Content
 **Priority:** MEDIUM
@@ -92,6 +93,6 @@ Last updated: 2026-03-05
 
 ## 📊 Stats
 
-- **Version:** 1.5.0
+- **Version:** 1.6.0
 - **Tests:** 148 passing
 - **Build:** Clean ✅
