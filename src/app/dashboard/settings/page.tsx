@@ -14,6 +14,7 @@ import {
   ChevronRight,
   Moon,
   Smartphone,
+  RefreshCw,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
@@ -50,6 +51,12 @@ export default function SettingsPage() {
           label: 'Profile',
           description: 'Manage your account details',
           href: '/dashboard/profile',
+        },
+        {
+          icon: RefreshCw,
+          label: 'Allowances',
+          description: 'Set up recurring deposits for your kids',
+          href: '/dashboard/allowances',
         },
         {
           icon: Bell,
