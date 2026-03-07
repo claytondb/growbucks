@@ -20,8 +20,10 @@ function createTransaction(overrides: Partial<Transaction> = {}): Transaction {
     balance_after_cents: 1000,
     description: 'Test deposit',
     status: 'completed',
+    requested_at: null,
+    processed_at: null,
+    processed_by: null,
     created_at: '2026-03-01T10:00:00Z',
-    updated_at: '2026-03-01T10:00:00Z',
     ...overrides,
   };
 }
