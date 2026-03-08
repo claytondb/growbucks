@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, X, Bell, Sparkles } from 'lucide-react';
-import { formatMoney } from '@/lib/utils';
+import { TrendingUp, X, Bell, Sparkles, Clock } from 'lucide-react';
+import { formatMoney, formatDate } from '@/lib/utils';
 
 interface Notification {
   id: string;
@@ -246,17 +246,25 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
                       <div className="flex items-start gap-3">
                         <span className="text-xl">{notification.emoji}</span>
                         <div className="flex-1 min-w-0">
-                          <p className="font-medium text-sm text-[#2C3E50]">
-                            {notification.title}
-                          </p>
+                          <div className="flex items-center gap-2">
+                            <p className="font-medium text-sm text-[#2C3E50]">
+                              {notification.title}
+                            </p>
+                          </div>
                           <p className="text-sm text-[#7F8C8D]">
                             {notification.message}
                           </p>
-                          {notification.amountCents && (
-                            <p className="text-sm font-mono font-bold text-[#27AE60] mt-1">
-                              +{formatMoney(notification.amountCents)}
-                            </p>
-                          )}
+                          <div className="flex items-center gap-2 mt-1">
+                            {notification.amountCents && (
+                              <p className="text-sm font-mono font-bold text-[#27AE60]">
+                                +{formatMoney(notification.amountCents)}
+                              </p>
+                            )}
+                            <span className="flex items-center gap-1 text-xs text-[#BDC3C7]">
+                              <Clock className="w-3 h-3" />
+                              {formatDate(notification.createdAt)}
+                            </span>
+                          </div>
                         </div>
                         <button
                           onClick={() => markAsRead(notification.id)}

@@ -33,6 +33,14 @@ interface SavedSettings {
   quiet_hours_end?: string;
 }
 
+// Format time for display (e.g., "21:00" -> "9:00 PM")
+function formatTimeForDisplay(time24: string): string {
+  const [hours, minutes] = time24.split(':').map(Number);
+  const period = hours >= 12 ? 'PM' : 'AM';
+  const hours12 = hours % 12 || 12;
+  return `${hours12}:${minutes.toString().padStart(2, '0')} ${period}`;
+}
+
 export default function NotificationsPage() {
   const { status } = useSession();
   const router = useRouter();
@@ -41,6 +49,8 @@ export default function NotificationsPage() {
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [pushEnabled, setPushEnabled] = useState(true);
   const [quietHours, setQuietHours] = useState(false);
+  const [quietHoursStart, setQuietHoursStart] = useState('21:00');
+  const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
   const [settings, setSettings] = useState<NotificationSetting[]>([
     {
       id: 'interest',
@@ -91,6 +101,8 @@ export default function NotificationsPage() {
             setEmailEnabled(s.email_enabled ?? true);
             setPushEnabled(s.push_enabled ?? true);
             setQuietHours(s.quiet_hours_enabled ?? false);
+            setQuietHoursStart(s.quiet_hours_start ?? '21:00');
+            setQuietHoursEnd(s.quiet_hours_end ?? '07:00');
             setSettings(prev => prev.map(setting => ({
               ...setting,
               emailEnabled: s[`${setting.id}_email` as keyof SavedSettings] as boolean ?? setting.emailEnabled,
@@ -158,6 +170,16 @@ export default function NotificationsPage() {
     const newValue = !quietHours;
     setQuietHours(newValue);
     saveSettings({ quiet_hours_enabled: newValue });
+  };
+
+  const updateQuietHoursStart = (time: string) => {
+    setQuietHoursStart(time);
+    saveSettings({ quiet_hours_start: time });
+  };
+
+  const updateQuietHoursEnd = (time: string) => {
+    setQuietHoursEnd(time);
+    saveSettings({ quiet_hours_end: time });
   };
 
   if (status === 'loading') {
@@ -296,16 +318,50 @@ export default function NotificationsPage() {
             <CardTitle className="text-lg">Quiet Hours</CardTitle>
             <CardDescription>Pause notifications during specific times</CardDescription>
           </CardHeader>
-          <CardContent>
+          <CardContent className="space-y-4">
             <div className="flex items-center justify-between p-4 bg-[#F8FAFE] rounded-xl">
               <div>
                 <p className="font-medium text-[#2C3E50]">Enable Quiet Hours</p>
-                <p className="text-sm text-[#7F8C8D]">9:00 PM - 7:00 AM</p>
+                <p className="text-sm text-[#7F8C8D]">
+                  {formatTimeForDisplay(quietHoursStart)} - {formatTimeForDisplay(quietHoursEnd)}
+                </p>
               </div>
               <button onClick={toggleQuietHours} className={quietHours ? "text-[#2ECC71]" : "text-[#7F8C8D]"}>
                 {quietHours ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
               </button>
             </div>
+            
+            {quietHours && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="grid grid-cols-2 gap-4"
+              >
+                <div className="p-4 bg-[#F8FAFE] rounded-xl">
+                  <label className="block text-sm font-medium text-[#2C3E50] mb-2">
+                    Start Time
+                  </label>
+                  <input
+                    type="time"
+                    value={quietHoursStart}
+                    onChange={(e) => updateQuietHoursStart(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-[#ECF0F1] rounded-lg text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#2ECC71] focus:border-transparent"
+                  />
+                </div>
+                <div className="p-4 bg-[#F8FAFE] rounded-xl">
+                  <label className="block text-sm font-medium text-[#2C3E50] mb-2">
+                    End Time
+                  </label>
+                  <input
+                    type="time"
+                    value={quietHoursEnd}
+                    onChange={(e) => updateQuietHoursEnd(e.target.value)}
+                    className="w-full px-3 py-2 bg-white border border-[#ECF0F1] rounded-lg text-[#2C3E50] focus:outline-none focus:ring-2 focus:ring-[#2ECC71] focus:border-transparent"
+                  />
+                </div>
+              </motion.div>
+            )}
           </CardContent>
         </Card>
       </motion.div>
