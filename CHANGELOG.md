@@ -12,9 +12,13 @@ All notable changes to GrowBucks.
   - Fixed setState-in-effect patterns for valid hydration use cases
   - Fixed unescaped apostrophe in homepage copy
   - Fixed reserved 'children' prop name usage
+- **Build Fix** - Resolved TypeScript errors in GrowthChart tooltip types
+  - Updated CustomTooltip to match recharts TooltipContentProps types
+  - Removed unused @ts-expect-error directives in auth.ts
 
 ### Infrastructure
 - ESLint: Reduced from 69 problems (31 errors, 38 warnings) to 32 warnings (0 errors)
+- Build: All TypeScript errors resolved, clean production build
 
 ## [1.6.1] - 2026-03-09
 
