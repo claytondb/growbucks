@@ -1,6 +1,6 @@
 # GrowBucks - Task List
 
-Last updated: 2026-03-05
+Last updated: 2026-03-09
 
 ## ✅ Completed
 
@@ -22,10 +22,11 @@ Last updated: 2026-03-05
 - [x] Financial tips of the day
 
 ### Testing & Documentation
-- [x] Unit testing with Vitest (84 tests)
+- [x] Unit testing with Vitest (191 tests)
 - [x] API documentation (API.md)
 - [x] Deployment guide (DEPLOYMENT.md)
 - [x] Design system documentation
+- [x] **Notifications utility library** (2026-03-09) - types, helpers, quiet hours logic (43 tests)
 
 ---
 
@@ -93,6 +94,6 @@ Last updated: 2026-03-05
 
 ## 📊 Stats
 
-- **Version:** 1.6.0
-- **Tests:** 148 passing
+- **Version:** 1.6.1
+- **Tests:** 191 passing
 - **Build:** Clean ✅

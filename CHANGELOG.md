@@ -2,6 +2,24 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.1] - 2026-03-09
+
+### Added
+- **Notifications Utility Library** - Reusable notification helpers
+  - `NotificationSettings` and `Notification` types
+  - `DEFAULT_NOTIFICATION_SETTINGS` for new users
+  - `NOTIFICATION_TYPE_CONFIG` with title, description, emoji, color per type
+  - `parseTimeToMinutes` and `formatTimeForDisplay` for quiet hours
+  - `isWithinQuietHours` handling overnight periods (e.g., 21:00-07:00)
+  - `shouldSendNotification` checking global, type-specific, and quiet hours settings
+  - `generateNotificationTitle` and `generateNotificationMessage` for child-friendly content
+  - `validateQuietHoursTime` for time format validation
+  - `getNotificationEmoji` and `getNotificationColor` helpers
+
+### Infrastructure
+- Tests: 148 → 191 passing tests (+43 for notifications)
+- New utility library: `src/lib/notifications.ts`
+
 ## [1.6.0] - 2026-03-06
 
 ### Added
