@@ -94,6 +94,6 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.6.1
+- **Version:** 1.6.2
 - **Tests:** 191 passing
 - **Build:** Clean ✅

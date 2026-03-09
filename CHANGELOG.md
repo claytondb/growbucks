@@ -2,6 +2,20 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.2] - 2026-03-09
+
+### Fixed
+- **Lint Cleanup** - Resolved all 31 ESLint errors
+  - Added proper TypeScript types for API route database entities
+  - Fixed CustomTooltip component recreation during render
+  - Fixed Math.random purity issues in Confetti and LoadingStates
+  - Fixed setState-in-effect patterns for valid hydration use cases
+  - Fixed unescaped apostrophe in homepage copy
+  - Fixed reserved 'children' prop name usage
+
+### Infrastructure
+- ESLint: Reduced from 69 problems (31 errors, 38 warnings) to 32 warnings (0 errors)
+
 ## [1.6.1] - 2026-03-09
 
 ### Added
