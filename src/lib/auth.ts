@@ -144,9 +144,7 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        // @ts-expect-error - custom property for child login
         token.isChild = user.isChild || false;
-        // @ts-expect-error - custom property for child login
         token.parentId = user.parentId;
       }
       return token;
@@ -154,9 +152,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        // @ts-expect-error - custom property for child login
         session.user.isChild = token.isChild || false;
-        // @ts-expect-error - custom property for child login
         session.user.parentId = token.parentId;
       }
       return session;

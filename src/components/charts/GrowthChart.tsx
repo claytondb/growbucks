@@ -18,22 +18,22 @@ import { formatMoney } from '@/lib/utils';
 import { Transaction } from '@/types/database';
 
 // Custom tooltip component - defined outside to avoid recreation
-interface TooltipPayload {
-  payload?: {
-    balance?: number | null;
-    projected?: number;
-    interest?: number;
-    isProjection?: boolean;
-  };
+interface DataPoint {
+  balance?: number | null;
+  projected?: number;
+  interest?: number;
+  isProjection?: boolean;
 }
 
-interface CustomTooltipProps {
+interface TooltipPayloadItem {
+  payload?: DataPoint;
+}
+
+function CustomTooltip({ active, payload, label }: {
   active?: boolean;
-  payload?: TooltipPayload[];
-  label?: string;
-}
-
-function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  payload?: readonly TooltipPayloadItem[];
+  label?: string | number;
+}) {
   if (!active || !payload || !payload.length) return null;
 
   const dataPoint = payload[0]?.payload;
@@ -216,7 +216,7 @@ export default function GrowthChart({
             tickFormatter={(value) => `$${value}`}
             tickMargin={8}
           />
-          <Tooltip content={CustomTooltip} />
+          <Tooltip content={(props) => <CustomTooltip {...props} />} />
           
           {/* Today reference line */}
           {todayIndex >= 0 && showProjection && (
