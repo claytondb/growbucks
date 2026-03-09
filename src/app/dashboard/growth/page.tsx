@@ -9,6 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import Link from 'next/link';
 
+interface ChildData {
+  id: string;
+  name: string;
+  balance_cents: number;
+  total_interest_earned?: number;
+  interest_earned_this_month?: number;
+  interest_rate_daily: number;
+}
+
 interface GrowthData {
   totalBalance: number;
   totalInterestEarned: number;
@@ -43,11 +52,12 @@ export default function GrowthPage() {
           setData(null);
         } else {
           // Calculate totals from children data
-          const totalBalance = children.reduce((sum: number, c: any) => sum + c.balance_cents, 0);
-          const totalInterestEarned = children.reduce((sum: number, c: any) => sum + (c.total_interest_earned || 0), 0);
-          const interestThisMonth = children.reduce((sum: number, c: any) => sum + (c.interest_earned_this_month || 0), 0);
-          const avgRate = children.length > 0 
-            ? children.reduce((sum: number, c: any) => sum + c.interest_rate_daily, 0) / children.length 
+          const typedChildren = children as ChildData[];
+          const totalBalance = typedChildren.reduce((sum: number, c: ChildData) => sum + c.balance_cents, 0);
+          const totalInterestEarned = typedChildren.reduce((sum: number, c: ChildData) => sum + (c.total_interest_earned || 0), 0);
+          const interestThisMonth = typedChildren.reduce((sum: number, c: ChildData) => sum + (c.interest_earned_this_month || 0), 0);
+          const avgRate = typedChildren.length > 0 
+            ? typedChildren.reduce((sum: number, c: ChildData) => sum + c.interest_rate_daily, 0) / typedChildren.length 
             : 0;
           
           setData({

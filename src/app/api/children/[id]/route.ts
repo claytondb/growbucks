@@ -4,6 +4,43 @@ import bcrypt from 'bcryptjs';
 import { authOptions } from '@/lib/auth';
 import { createServerSupabaseClient } from '@/lib/supabase';
 
+// Type definitions for database entities
+interface DbChild {
+  id: string;
+  user_id: string;
+  name: string;
+  pin_hash: string;
+  balance_cents: number;
+  interest_rate_daily: number;
+  interest_paused: boolean;
+  avatar_url: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface DbUser {
+  id: string;
+  email: string;
+}
+
+interface DbTransaction {
+  id: string;
+  child_id: string;
+  type: string;
+  amount_cents: number;
+  description: string | null;
+  created_at: string;
+}
+
+interface ChildUpdatePayload {
+  name?: string;
+  pin_hash?: string;
+  interest_rate_daily?: number;
+  interest_paused?: boolean;
+  avatar_url?: string | null;
+  updated_at?: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSupabase = () => createServerSupabaseClient() as any;
 
@@ -27,7 +64,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     .from('children')
     .select('*')
     .eq('id', id)
-    .single() as { data: any; error: any };
+    .single() as { data: DbChild | null; error: Error | null };
 
   if (error || !child) {
     return NextResponse.json({ error: 'Child not found' }, { status: 404 });
@@ -43,7 +80,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
       .from('users')
       .select('id')
       .eq('email', session.user.email!)
-      .single() as { data: any };
+      .single() as { data: DbUser | null };
 
     if (!user || child.user_id !== user.id) {
       return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
@@ -56,7 +93,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     .select('*')
     .eq('child_id', id)
     .order('created_at', { ascending: false })
-    .limit(100) as { data: any[] | null };
+    .limit(100) as { data: DbTransaction[] | null };
 
   // Calculate stats
   const startOfMonth = new Date();
@@ -119,7 +156,7 @@ export async function PATCH(request: NextRequest, context: RouteContext) {
   }
 
   // Build update object
-  const updates: Record<string, any> = {};
+  const updates: ChildUpdatePayload = {};
 
   if (name !== undefined) {
     if (typeof name !== 'string' || name.length < 1 || name.length > 50) {

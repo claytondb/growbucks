@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import { useMemo } from 'react';
 import {
   Area,
   AreaChart,
@@ -9,13 +10,61 @@ import {
   Tooltip,
   ResponsiveContainer,
   CartesianGrid,
-  Line,
   ComposedChart,
   ReferenceLine,
 } from 'recharts';
 import { format, subDays, addDays } from 'date-fns';
 import { formatMoney } from '@/lib/utils';
 import { Transaction } from '@/types/database';
+
+// Custom tooltip component - defined outside to avoid recreation
+interface TooltipPayload {
+  payload?: {
+    balance?: number | null;
+    projected?: number;
+    interest?: number;
+    isProjection?: boolean;
+  };
+}
+
+interface CustomTooltipProps {
+  active?: boolean;
+  payload?: TooltipPayload[];
+  label?: string;
+}
+
+function CustomTooltip({ active, payload, label }: CustomTooltipProps) {
+  if (!active || !payload || !payload.length) return null;
+
+  const dataPoint = payload[0]?.payload;
+  if (!dataPoint) return null;
+  
+  const isProjection = dataPoint.isProjection;
+  const value = dataPoint.balance ?? dataPoint.projected;
+
+  if (value === null || value === undefined) return null;
+
+  return (
+    <div className="bg-white rounded-lg shadow-lg border border-[#BDC3C7] p-3">
+      <p className="text-sm font-medium text-[#2C3E50]">
+        {label} {isProjection && <span className="text-[#9B59B6]">(projected)</span>}
+      </p>
+      <p className={`text-lg font-bold ${isProjection ? 'text-[#9B59B6]' : 'text-[#2ECC71]'}`}>
+        {formatMoney(value * 100)}
+      </p>
+      {!isProjection && dataPoint.interest && dataPoint.interest > 0 && (
+        <p className="text-xs text-[#F39C12]">
+          +{formatMoney(dataPoint.interest * 100)} interest
+        </p>
+      )}
+      {isProjection && (
+        <p className="text-xs text-[#7F8C8D]">
+          🔮 If you keep saving!
+        </p>
+      )}
+    </div>
+  );
+}
 
 interface GrowthChartProps {
   transactions: Transaction[];
@@ -116,37 +165,6 @@ export default function GrowthChart({
     return data;
   }, [transactions, currentBalance, showProjection, projectionDays, interestRate]);
 
-  const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload || !payload.length) return null;
-
-    const dataPoint = payload[0]?.payload;
-    const isProjection = dataPoint?.isProjection;
-    const value = dataPoint?.balance ?? dataPoint?.projected;
-
-    if (value === null || value === undefined) return null;
-
-    return (
-      <div className="bg-white rounded-lg shadow-lg border border-[#BDC3C7] p-3">
-        <p className="text-sm font-medium text-[#2C3E50]">
-          {label} {isProjection && <span className="text-[#9B59B6]">(projected)</span>}
-        </p>
-        <p className={`text-lg font-bold ${isProjection ? 'text-[#9B59B6]' : 'text-[#2ECC71]'}`}>
-          {formatMoney(value * 100)}
-        </p>
-        {!isProjection && dataPoint?.interest > 0 && (
-          <p className="text-xs text-[#F39C12]">
-            +{formatMoney(dataPoint.interest * 100)} interest
-          </p>
-        )}
-        {isProjection && (
-          <p className="text-xs text-[#7F8C8D]">
-            🔮 If you keep saving!
-          </p>
-        )}
-      </div>
-    );
-  };
-
   // Find the transition point between actual and projected
   const todayIndex = chartData.findIndex(d => d.isProjection) - 1;
 
@@ -198,7 +216,7 @@ export default function GrowthChart({
             tickFormatter={(value) => `$${value}`}
             tickMargin={8}
           />
-          <Tooltip content={<CustomTooltip />} />
+          <Tooltip content={CustomTooltip} />
           
           {/* Today reference line */}
           {todayIndex >= 0 && showProjection && (

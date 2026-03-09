@@ -3,6 +3,19 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createServerSupabaseClient } from '@/lib/supabase';
 
+// Type definitions for joined query result
+interface TransactionWithChild {
+  id: string;
+  child_id: string;
+  type: string;
+  amount_cents: number;
+  status: string;
+  children: {
+    user_id: string;
+    balance_cents: number;
+  };
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSupabase = () => createServerSupabaseClient() as any;
 
@@ -203,12 +216,13 @@ export async function PATCH(request: NextRequest) {
   }
 
   // Verify parent owns this child
-  if ((transaction.children as any).user_id !== user.id) {
+  const txWithChild = transaction as TransactionWithChild;
+  if (txWithChild.children.user_id !== user.id) {
     return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
   }
 
   if (approved) {
-    const childBalance = (transaction.children as any).balance_cents;
+    const childBalance = txWithChild.children.balance_cents;
     const withdrawAmount = Math.abs(transaction.amount_cents);
 
     if (withdrawAmount > childBalance) {

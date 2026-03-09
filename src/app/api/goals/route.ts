@@ -3,11 +3,23 @@ import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/auth';
 import { createServerSupabaseClient } from '@/lib/supabase';
 
+interface DbGoal {
+  id: string;
+  child_id: string;
+  name: string;
+  target_cents: number;
+  target_date: string | null;
+  emoji: string | null;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSupabase = () => createServerSupabaseClient() as any;
 
 // GET /api/goals - List all goals for the user's children
-export async function GET(request: NextRequest) {
+export async function GET(_request: NextRequest) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -61,7 +73,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Enrich goals with child name and current balance
-    const enrichedGoals = (goals || []).map((goal: any) => {
+    const enrichedGoals = (goals || []).map((goal: DbGoal) => {
       const child = childMap.get(goal.child_id);
       return {
         ...goal,

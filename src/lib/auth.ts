@@ -118,11 +118,11 @@ export const authOptions: NextAuthOptions = {
           const { error } = await supabase.from('users').insert({
             email: user.email!.toLowerCase(),
             name: user.name || 'Parent',
-            auth_provider: 'google' as const,
+            auth_provider: 'google',
             google_id: account.providerAccountId,
             email_verified: true,
             timezone: 'UTC',
-          } as any);
+          });
 
           if (error) {
             console.error('Error creating user:', error);
@@ -141,12 +141,12 @@ export const authOptions: NextAuthOptions = {
       }
       return true;
     },
-    async jwt({ token, user, account }) {
+    async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property for child login
         token.isChild = user.isChild || false;
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property for child login
         token.parentId = user.parentId;
       }
       return token;
@@ -154,9 +154,9 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       if (session.user) {
         session.user.id = token.id as string;
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property for child login
         session.user.isChild = token.isChild || false;
-        // @ts-ignore - custom property
+        // @ts-expect-error - custom property for child login
         session.user.parentId = token.parentId;
       }
       return session;

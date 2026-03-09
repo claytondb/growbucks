@@ -48,8 +48,8 @@ export default function LandingPage() {
             
             <p className="text-lg md:text-xl text-[#7F8C8D] max-w-2xl mx-auto mb-8">
               GrowBucks helps parents teach kids about compound interest. 
-              You "bank" your child's allowance and they watch it grow daily. 
-              <span className="text-[#2C3E50] font-medium">No real money enters the app — you're the bank!</span>
+              You &quot;bank&quot; your child&apos;s allowance and they watch it grow daily. 
+              <span className="text-[#2C3E50] font-medium">No real money enters the app — you&apos;re the bank!</span>
             </p>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center">

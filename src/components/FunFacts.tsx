@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Lightbulb, RefreshCw } from 'lucide-react';
 
@@ -79,6 +79,14 @@ export default function FunFactCard({
   );
   const [isAnimating, setIsAnimating] = useState(false);
 
+  const nextFact = useCallback(() => {
+    setIsAnimating(true);
+    setTimeout(() => {
+      setCurrentIndex((prev) => (prev + 1) % FUN_FACTS.length);
+      setIsAnimating(false);
+    }, 150);
+  }, []);
+
   useEffect(() => {
     if (!autoRotate) return;
     
@@ -87,15 +95,7 @@ export default function FunFactCard({
     }, rotateInterval);
 
     return () => clearInterval(interval);
-  }, [autoRotate, rotateInterval]);
-
-  const nextFact = () => {
-    setIsAnimating(true);
-    setTimeout(() => {
-      setCurrentIndex((prev) => (prev + 1) % FUN_FACTS.length);
-      setIsAnimating(false);
-    }, 150);
-  };
+  }, [autoRotate, rotateInterval, nextFact]);
 
   const fact = FUN_FACTS[currentIndex];
 

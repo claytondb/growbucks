@@ -1,7 +1,8 @@
 'use client';
 
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Sprout, TrendingUp, Coins, Target } from 'lucide-react';
+import { Sprout } from 'lucide-react';
 
 // Fun loading messages for kids
 const LOADING_MESSAGES = [
@@ -26,7 +27,10 @@ export function LoadingSpinner({ size = 'md', message, showMessage = true }: Loa
     lg: 'w-14 h-14 border-4',
   };
 
-  const randomMessage = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
+  // Use lazy initializer to select random message once on mount
+  const [randomMessage] = useState(() => 
+    LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)]
+  );
   const displayMessage = message || randomMessage.text;
   const emoji = message ? '⏳' : randomMessage.emoji;
 

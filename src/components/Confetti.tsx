@@ -10,6 +10,8 @@ interface ConfettiPiece {
   delay: number;
   rotation: number;
   size: number;
+  animationDuration: number;
+  isCircle: boolean;
 }
 
 interface ConfettiProps {
@@ -23,6 +25,8 @@ const COLORS = ['#2ECC71', '#F1C40F', '#3498DB', '#E74C3C', '#9B59B6', '#E67E22'
 export default function Confetti({ active, duration = 3000, pieces = 50 }: ConfettiProps) {
   const [confetti, setConfetti] = useState<ConfettiPiece[]>([]);
 
+  // Confetti generation is intentional side effect when active changes
+  /* eslint-disable react-hooks/set-state-in-effect */
   useEffect(() => {
     if (active) {
       const newConfetti: ConfettiPiece[] = Array.from({ length: pieces }, (_, i) => ({
@@ -32,13 +36,15 @@ export default function Confetti({ active, duration = 3000, pieces = 50 }: Confe
         delay: Math.random() * 0.5,
         rotation: Math.random() * 360,
         size: 8 + Math.random() * 8,
+        animationDuration: 2 + Math.random() * 2,
+        isCircle: Math.random() > 0.5,
       }));
       setConfetti(newConfetti);
-
       const timer = setTimeout(() => setConfetti([]), duration);
       return () => clearTimeout(timer);
     }
   }, [active, duration, pieces]);
+  /* eslint-enable react-hooks/set-state-in-effect */
 
   return (
     <AnimatePresence>
@@ -60,7 +66,7 @@ export default function Confetti({ active, duration = 3000, pieces = 50 }: Confe
               }}
               exit={{ opacity: 0 }}
               transition={{
-                duration: 2 + Math.random() * 2,
+                duration: piece.animationDuration,
                 delay: piece.delay,
                 ease: 'easeIn',
               }}
@@ -69,7 +75,7 @@ export default function Confetti({ active, duration = 3000, pieces = 50 }: Confe
                 width: piece.size,
                 height: piece.size,
                 backgroundColor: piece.color,
-                borderRadius: Math.random() > 0.5 ? '50%' : '2px',
+                borderRadius: piece.isCircle ? '50%' : '2px',
               }}
             />
           ))}

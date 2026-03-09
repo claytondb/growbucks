@@ -44,7 +44,7 @@ interface RecurringDeposit {
 }
 
 interface RecurringDepositsManagerProps {
-  children: Child[];
+  childAccounts: Child[];
 }
 
 const AVATARS: Record<string, string> = {
@@ -58,7 +58,7 @@ const AVATARS: Record<string, string> = {
   unicorn: '🦄',
 };
 
-export default function RecurringDepositsManager({ children }: RecurringDepositsManagerProps) {
+export default function RecurringDepositsManager({ childAccounts }: RecurringDepositsManagerProps) {
   const [deposits, setDeposits] = useState<RecurringDeposit[]>([]);
   const [loading, setLoading] = useState(true);
   const [showAddModal, setShowAddModal] = useState(false);
@@ -93,7 +93,7 @@ export default function RecurringDepositsManager({ children }: RecurringDeposits
   };
 
   const resetForm = () => {
-    setFormChildId(children[0]?.id || '');
+    setFormChildId(childAccounts[0]?.id || '');
     setFormAmount('');
     setFormFrequency('weekly');
     setFormDayOfWeek(1);
@@ -210,11 +210,11 @@ export default function RecurringDepositsManager({ children }: RecurringDeposits
   };
 
   const getChildName = (childId: string) => {
-    return children.find((c) => c.id === childId)?.name || 'Unknown';
+    return childAccounts.find((c) => c.id === childId)?.name || 'Unknown';
   };
 
   const getChildAvatar = (childId: string) => {
-    const child = children.find((c) => c.id === childId);
+    const child = childAccounts.find((c) => c.id === childId);
     return child?.avatar ? AVATARS[child.avatar] || '👤' : '👤';
   };
 
@@ -227,7 +227,7 @@ export default function RecurringDepositsManager({ children }: RecurringDeposits
   }
 
   // Group deposits by child
-  const depositsByChild = children.map((child) => ({
+  const depositsByChild = childAccounts.map((child) => ({
     child,
     deposits: deposits.filter((d) => d.child_id === child.id),
   }));
@@ -250,13 +250,13 @@ export default function RecurringDepositsManager({ children }: RecurringDeposits
       {/* Add Button */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold text-[#2C3E50]">Recurring Deposits</h2>
-        <Button variant="primary" size="sm" onClick={openAddModal} disabled={children.length === 0}>
+        <Button variant="primary" size="sm" onClick={openAddModal} disabled={childAccounts.length === 0}>
           <Plus className="w-4 h-4 mr-2" />
           Add Allowance
         </Button>
       </div>
 
-      {children.length === 0 ? (
+      {childAccounts.length === 0 ? (
         <Card>
           <CardContent className="text-center py-8 text-[#7F8C8D]">
             <p>Add a child first to set up recurring deposits.</p>
@@ -398,7 +398,7 @@ export default function RecurringDepositsManager({ children }: RecurringDeposits
                       disabled={!!editingDeposit}
                     >
                       <option value="">Select a child...</option>
-                      {children.map((child) => (
+                      {childAccounts.map((child) => (
                         <option key={child.id} value={child.id}>
                           {AVATARS[child.avatar || ''] || '👤'} {child.name}
                         </option>

@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Lightbulb, ChevronRight, X, Sparkles } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { motion } from 'framer-motion';
+import { Lightbulb, X, Sparkles } from 'lucide-react';
 
 // Financial tips for kids - age-appropriate and educational
 const FINANCIAL_TIPS = [
@@ -125,12 +125,14 @@ interface FinancialTipProps {
 
 export default function FinancialTip({ className = '', dismissible = true, compact = false }: FinancialTipProps) {
   const [visible, setVisible] = useState(true);
-  const [tip, setTip] = useState<typeof FINANCIAL_TIPS[0] | null>(null);
-
-  useEffect(() => {
-    // Get tip on client side to avoid hydration mismatch
-    setTip(getTipOfTheDay());
-  }, []);
+  const [mounted, setMounted] = useState(false);
+  
+  // Use mounted state to handle hydration - only calculate tip client-side
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
+  
+  // Memoize tip calculation to avoid recalculation on re-renders
+  const tip = useMemo(() => mounted ? getTipOfTheDay() : null, [mounted]);
 
   if (!visible || !tip) {
     return null;
@@ -195,11 +197,12 @@ export default function FinancialTip({ className = '', dismissible = true, compa
 
 // Mini version for dashboard cards
 export function FinancialTipMini() {
-  const [tip, setTip] = useState<typeof FINANCIAL_TIPS[0] | null>(null);
-
-  useEffect(() => {
-    setTip(getTipOfTheDay());
-  }, []);
+  const [mounted, setMounted] = useState(false);
+  
+  // eslint-disable-next-line react-hooks/set-state-in-effect
+  useEffect(() => { setMounted(true); }, []);
+  
+  const tip = useMemo(() => mounted ? getTipOfTheDay() : null, [mounted]);
 
   if (!tip) return null;
 

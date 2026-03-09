@@ -221,6 +221,7 @@ describe('transactionsToCSV', () => {
 
   test('should handle null description', () => {
     const data = createExportData([
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       createTransaction({ description: null as any }),
     ]);
     
