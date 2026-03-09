@@ -2,6 +2,18 @@ import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase';
 import { Child } from '@/types/database';
 
+// Interest transaction to be inserted
+interface InterestTransaction {
+  child_id: string;
+  type: 'interest';
+  amount_cents: number;
+  balance_after_cents: number;
+  description: string;
+  status: 'completed';
+  processed_at: string;
+  created_at: string;
+}
+
 // POST /api/calculate-interest - Cron job to apply daily interest
 // Should be called daily, handles catch-up for missed days
 export async function POST(request: NextRequest) {
@@ -53,7 +65,7 @@ export async function POST(request: NextRequest) {
       if (daysMissed <= 0) continue;
 
       let currentBalance = child.balance_cents;
-      const transactions: any[] = [];
+      const transactions: InterestTransaction[] = [];
 
       // Apply interest for each missed day
       for (let i = 0; i < daysMissed; i++) {
