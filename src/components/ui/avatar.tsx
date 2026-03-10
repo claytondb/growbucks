@@ -35,6 +35,7 @@ const Avatar = React.forwardRef<HTMLDivElement, AvatarProps>(
         {showFallback ? (
           <span>{getInitials(name)}</span>
         ) : (
+          // eslint-disable-next-line @next/next/no-img-element -- Avatar images can come from various OAuth providers, using img for flexibility
           <img
             src={src}
             alt={name}
