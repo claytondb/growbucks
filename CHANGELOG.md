@@ -2,6 +2,11 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.3] - 2026-03-10
+
+### Fixed
+- **Avatar image eslint** - Added eslint-disable comment for Avatar img element (OAuth provider profile images require flexibility)
+
 ## [1.6.2] - 2026-03-09
 
 ### Fixed
