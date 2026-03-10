@@ -9,7 +9,6 @@ import {
   formatSchedule,
   getOrdinalSuffix,
   formatAmountCents,
-  Frequency,
 } from './recurring-deposits';
 
 describe('recurring-deposits', () => {

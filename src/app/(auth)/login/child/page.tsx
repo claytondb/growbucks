@@ -17,6 +17,7 @@ export default function ChildLoginPage() {
   
   const [step, setStep] = useState<'select' | 'pin'>('select');
   const [children, setChildren] = useState<Child[]>([]);
+  void setChildren; // Placeholder for future public children endpoint
   const [selectedChild, setSelectedChild] = useState<Child | null>(null);
   const [pin, setPin] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -29,7 +30,7 @@ export default function ChildLoginPage() {
       // In a real app, this would be a public endpoint that gets children by parent email/code
       // For demo, we'll just show this is where it would go
       setLoadingChildren(false);
-    } catch (err) {
+    } catch {
       setLoadingChildren(false);
     }
   }, []);
@@ -48,7 +49,7 @@ export default function ChildLoginPage() {
     setError(null);
   };
 
-  const handlePinSubmit = async () => {
+  const handlePinSubmit = useCallback(async () => {
     if (!selectedChild || pin.length < 4) return;
 
     setLoading(true);
@@ -67,18 +68,18 @@ export default function ChildLoginPage() {
       } else {
         router.push('/dashboard');
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedChild, pin, router]);
 
   useEffect(() => {
     if (pin.length >= 4) {
       handlePinSubmit();
     }
-  }, [pin]);
+  }, [pin, handlePinSubmit]);
 
   if (status === 'loading' || loadingChildren) {
     return (

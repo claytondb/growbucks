@@ -10,7 +10,6 @@ import {
   Plus,
   Minus,
   TrendingUp,
-  Sparkles,
   Settings,
   Pause,
   Play,
@@ -43,14 +42,15 @@ interface ChildWithDetails extends Child {
 }
 
 export default function ChildDetailPage() {
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const router = useRouter();
   const params = useParams();
   const childId = params.id as string;
 
   const [child, setChild] = useState<ChildWithDetails | null>(null);
   const [loading, setLoading] = useState(true);
-  const [displayBalance, setDisplayBalance] = useState(0);
+  const [_displayBalance, setDisplayBalance] = useState(0);
+  void _displayBalance; // State maintained for future real-time balance display
   const [depositOpen, setDepositOpen] = useState(false);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);

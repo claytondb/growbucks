@@ -83,8 +83,6 @@ export default function Wallet({
       const now = new Date();
       const lastInterest = new Date(lastInterestAt);
       const msElapsed = now.getTime() - lastInterest.getTime();
-      const msPerDay = 24 * 60 * 60 * 1000;
-      
       // How much of the day has passed (for visual effect, not actual calculation)
       // Reset every "cycle" - let's say every 10 seconds for visual appeal
       const cycleMs = 10000;

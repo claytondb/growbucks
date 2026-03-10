@@ -36,9 +36,11 @@ export default function ChildCard({ child, interestEarnedThisMonth = 0 }: ChildC
     return () => clearInterval(interval);
   }, [child]);
 
-  const growthPercent = child.balance_cents > 0
+  // Calculate growth percent for potential future use
+  const _growthPercent = child.balance_cents > 0
     ? ((interestEarnedThisMonth / child.balance_cents) * 100).toFixed(1)
     : '0.0';
+  void _growthPercent; // Suppress unused warning
 
   return (
     <Link href={`/dashboard/child/${child.id}`}>

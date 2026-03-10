@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import {
   DEFAULT_NOTIFICATION_SETTINGS,
   NOTIFICATION_TYPE_CONFIG,

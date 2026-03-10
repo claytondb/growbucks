@@ -71,7 +71,7 @@ export default function WithdrawModal({ open, onOpenChange, child, isParent = tr
         setSuccess(false);
         onOpenChange(false);
       }, 1500);
-    } catch (err) {
+    } catch {
       setError('Failed to process withdrawal. Please try again.');
     } finally {
       setLoading(false);

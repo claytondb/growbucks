@@ -11,7 +11,7 @@ import { Input } from '@/components/ui/input';
 
 function LoginForm() {
   const router = useRouter();
-  const { data: session, status } = useSession();
+  const { status } = useSession();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get('callbackUrl') || '/dashboard';
   const error = searchParams.get('error');

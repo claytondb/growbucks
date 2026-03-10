@@ -209,15 +209,6 @@ export default function RecurringDepositsManager({ childAccounts }: RecurringDep
     }
   };
 
-  const getChildName = (childId: string) => {
-    return childAccounts.find((c) => c.id === childId)?.name || 'Unknown';
-  };
-
-  const getChildAvatar = (childId: string) => {
-    const child = childAccounts.find((c) => c.id === childId);
-    return child?.avatar ? AVATARS[child.avatar] || '👤' : '👤';
-  };
-
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">

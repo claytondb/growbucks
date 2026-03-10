@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, Lock, Sparkles, TrendingUp, Target, Coins, Calendar } from 'lucide-react';
+import { Trophy, Lock, TrendingUp, Target, Coins, Calendar } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface Achievement {

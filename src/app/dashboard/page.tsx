@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Plus, TrendingUp, Wallet, Users, AlertCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import ChildCard from '@/components/ChildCard';
 import AddChildModal from '@/components/modals/AddChildModal';
 import FunFactCard from '@/components/FunFacts';

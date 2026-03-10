@@ -19,7 +19,7 @@ interface DbGoal {
 const getSupabase = () => createServerSupabaseClient() as any;
 
 // GET /api/goals - List all goals for the user's children
-export async function GET(_request: NextRequest) {
+export async function GET() {
   try {
     const session = await getServerSession(authOptions);
     

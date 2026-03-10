@@ -115,7 +115,8 @@ export interface PinInputProps {
 }
 
 const PinInput = React.forwardRef<HTMLInputElement, PinInputProps>(
-  ({ value, onChange, length = 4, error, label }, ref) => {
+  ({ value, onChange, length = 4, error, label }, _ref) => {
+    void _ref; // forwardRef signature maintained for API consistency
     const inputRef = React.useRef<HTMLInputElement>(null);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {

@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { TrendingUp, X, Bell, Sparkles, Clock } from 'lucide-react';
+import { X, Bell, Sparkles, Clock } from 'lucide-react';
 import { formatMoney, formatDate } from '@/lib/utils';
 
 interface Notification {
@@ -80,7 +80,8 @@ interface NotificationBannerProps {
   onDismissAll: () => void;
 }
 
-export function NotificationBanner({ notifications, onDismiss, onDismissAll }: NotificationBannerProps) {
+export function NotificationBanner({ notifications, onDismiss: _onDismiss, onDismissAll }: NotificationBannerProps) {
+  void _onDismiss; // Individual dismiss available for future notification expansion
   if (notifications.length === 0) return null;
 
   const interestTotal = notifications

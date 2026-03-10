@@ -65,7 +65,7 @@ export default function DepositModal({ open, onOpenChange, child, onSubmit }: De
         setSuccess(false);
         onOpenChange(false);
       }, 1500);
-    } catch (err) {
+    } catch {
       setError('Failed to deposit. Please try again.');
     } finally {
       setLoading(false);
