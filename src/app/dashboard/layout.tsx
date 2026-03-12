@@ -4,6 +4,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Home, BarChart3, PlusCircle, Target, User, Sprout } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { NotificationCenter } from '@/components/InterestNotification';
 
 const navItems = [
   { href: '/dashboard', icon: Home, label: 'Home' },
@@ -52,10 +53,27 @@ export default function DashboardLayout({
             );
           })}
         </nav>
+
+        {/* Notifications bell at sidebar bottom */}
+        <div className="p-4 border-t border-[#ECF0F1] flex items-center justify-between">
+          <span className="text-sm font-medium text-[#7F8C8D]">Notifications</span>
+          <NotificationCenter />
+        </div>
       </aside>
 
       {/* Main content */}
       <div className="md:ml-64">
+        {/* Mobile top bar with notification bell */}
+        <div className="md:hidden sticky top-0 z-30 flex items-center justify-between px-4 h-12 bg-white/90 backdrop-blur border-b border-[#ECF0F1]">
+          <Link href="/" className="flex items-center gap-2">
+            <div className="w-7 h-7 bg-[#2ECC71] rounded-lg flex items-center justify-center">
+              <Sprout className="w-4 h-4 text-white" />
+            </div>
+            <span className="font-bold text-base text-[#2C3E50]">GrowBucks</span>
+          </Link>
+          <NotificationCenter />
+        </div>
+
         {children}
       </div>
 

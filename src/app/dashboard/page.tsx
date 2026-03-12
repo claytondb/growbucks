@@ -10,7 +10,6 @@ import { Card, CardContent } from '@/components/ui/card';
 import ChildCard from '@/components/ChildCard';
 import AddChildModal from '@/components/modals/AddChildModal';
 import FunFactCard from '@/components/FunFacts';
-import { NotificationCenter } from '@/components/InterestNotification';
 import { formatMoney, getGreeting } from '@/lib/utils';
 import { Child } from '@/types/database';
 
@@ -112,7 +111,6 @@ export default function DashboardPage() {
               <p className="text-sm text-[#7F8C8D]">Here&apos;s how your family is doing</p>
             </div>
             <div className="flex items-center gap-2">
-              <NotificationCenter />
               <Button onClick={() => setAddChildOpen(true)}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Child
