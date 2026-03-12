@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Bell, Sparkles, Clock } from 'lucide-react';
+import { X, Bell, Sparkles, Clock, History, CheckCheck } from 'lucide-react';
 import { formatMoney, formatDate } from '@/lib/utils';
 
 interface Notification {
@@ -14,6 +14,7 @@ interface Notification {
   amountCents?: number;
   childName?: string;
   createdAt: string;
+  readAt?: string | null;
 }
 
 interface InterestToastProps {
@@ -137,33 +138,52 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [isOpen, setIsOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [showHistory, setShowHistory] = useState(false);
+  const [historyLoading, setHistoryLoading] = useState(false);
 
-  // Fetch notifications on mount
-  useEffect(() => {
-    const fetchNotifications = async () => {
-      try {
-        const res = await fetch('/api/notifications');
-        if (res.ok) {
-          const data = await res.json();
-          setNotifications(data.notifications || []);
-          setUnreadCount(data.unreadCount || 0);
-        }
-      } catch (error) {
-        console.error('Error fetching notifications:', error);
+  const fetchNotifications = async (includeRead = false) => {
+    try {
+      const url = includeRead
+        ? '/api/notifications?include_read=true&limit=40'
+        : '/api/notifications';
+      const res = await fetch(url);
+      if (res.ok) {
+        const data = await res.json();
+        setNotifications(data.notifications || []);
+        setUnreadCount(data.unreadCount || 0);
       }
-    };
+    } catch (error) {
+      console.error('Error fetching notifications:', error);
+    }
+  };
 
-    fetchNotifications();
-    
-    // Poll for new notifications every 30 seconds
-    const interval = setInterval(fetchNotifications, 30000);
+  // Fetch unread notifications on mount and poll every 30s
+  useEffect(() => {
+    fetchNotifications(false);
+    const interval = setInterval(() => fetchNotifications(false), 30000);
     return () => clearInterval(interval);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Reload when history toggle changes
+  useEffect(() => {
+    if (!isOpen) return;
+    setHistoryLoading(true);
+    fetchNotifications(showHistory).finally(() => setHistoryLoading(false));
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showHistory, isOpen]);
 
   const markAsRead = async (id: string) => {
     try {
       await fetch(`/api/notifications/${id}/read`, { method: 'POST' });
-      setNotifications(prev => prev.filter(n => n.id !== id));
+      if (showHistory) {
+        // In history mode just update the local state to mark it read
+        setNotifications(prev =>
+          prev.map(n => n.id === id ? { ...n, readAt: new Date().toISOString() } : n)
+        );
+      } else {
+        setNotifications(prev => prev.filter(n => n.id !== id));
+      }
       setUnreadCount(prev => Math.max(0, prev - 1));
     } catch (error) {
       console.error('Error marking notification as read:', error);
@@ -173,17 +193,36 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
   const markAllAsRead = async () => {
     try {
       await fetch('/api/notifications/read-all', { method: 'POST' });
-      setNotifications([]);
+      if (showHistory) {
+        // In history mode, mark all as read locally
+        setNotifications(prev =>
+          prev.map(n => ({ ...n, readAt: new Date().toISOString() }))
+        );
+      } else {
+        setNotifications([]);
+      }
       setUnreadCount(0);
     } catch (error) {
       console.error('Error marking all as read:', error);
     }
   };
 
+  const handleToggleOpen = () => {
+    const next = !isOpen;
+    setIsOpen(next);
+    if (!next) {
+      // Reset history mode when closing
+      setShowHistory(false);
+    }
+  };
+
+  const unreadNotifications = notifications.filter(n => !('readAt' in n) || !n.readAt);
+  const hasUnread = unreadNotifications.length > 0;
+
   return (
     <div className={`relative ${className}`}>
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={handleToggleOpen}
         className="relative p-2 hover:bg-[#ECF0F1] rounded-xl transition-colors"
       >
         <Bell className="w-5 h-5 text-[#7F8C8D]" />
@@ -207,7 +246,7 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               className="fixed inset-0 z-40"
-              onClick={() => setIsOpen(false)}
+              onClick={handleToggleOpen}
             />
 
             {/* Dropdown */}
@@ -217,67 +256,147 @@ export function NotificationCenter({ className }: NotificationCenterProps) {
               exit={{ opacity: 0, y: 10, scale: 0.95 }}
               className="absolute right-0 mt-2 w-80 bg-white rounded-2xl shadow-xl border border-[#ECF0F1] z-50 overflow-hidden"
             >
-              <div className="p-4 border-b border-[#ECF0F1] flex items-center justify-between">
-                <h3 className="font-bold text-[#2C3E50]">Notifications</h3>
-                {notifications.length > 0 && (
+              {/* Header */}
+              <div className="p-4 border-b border-[#ECF0F1]">
+                <div className="flex items-center justify-between mb-3">
+                  <h3 className="font-bold text-[#2C3E50]">
+                    {showHistory ? 'Notification History' : 'Notifications'}
+                  </h3>
+                  {hasUnread && !showHistory && (
+                    <button
+                      onClick={markAllAsRead}
+                      className="flex items-center gap-1 text-xs text-[#3498DB] hover:text-[#2980B9] transition-colors"
+                    >
+                      <CheckCheck className="w-3.5 h-3.5" />
+                      Mark all read
+                    </button>
+                  )}
+                </div>
+
+                {/* History toggle */}
+                <div className="flex rounded-xl bg-[#F8FAFE] p-1 gap-1">
                   <button
-                    onClick={markAllAsRead}
-                    className="text-sm text-[#3498DB] hover:underline"
+                    onClick={() => setShowHistory(false)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                      !showHistory
+                        ? 'bg-white shadow-sm text-[#2C3E50]'
+                        : 'text-[#7F8C8D] hover:text-[#2C3E50]'
+                    }`}
                   >
-                    Mark all read
+                    <Bell className="w-3.5 h-3.5" />
+                    Unread
+                    {unreadCount > 0 && (
+                      <span className="bg-[#E74C3C] text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                        {unreadCount > 9 ? '9+' : unreadCount}
+                      </span>
+                    )}
                   </button>
-                )}
+                  <button
+                    onClick={() => setShowHistory(true)}
+                    className={`flex-1 flex items-center justify-center gap-1.5 py-1.5 px-2 rounded-lg text-xs font-medium transition-all ${
+                      showHistory
+                        ? 'bg-white shadow-sm text-[#2C3E50]'
+                        : 'text-[#7F8C8D] hover:text-[#2C3E50]'
+                    }`}
+                  >
+                    <History className="w-3.5 h-3.5" />
+                    History
+                  </button>
+                </div>
               </div>
 
               <div className="max-h-80 overflow-y-auto">
-                {notifications.length === 0 ? (
+                {historyLoading ? (
+                  <div className="p-8 flex justify-center">
+                    <div className="w-6 h-6 border-2 border-[#2ECC71] border-t-transparent rounded-full animate-spin" />
+                  </div>
+                ) : notifications.length === 0 ? (
                   <div className="p-8 text-center text-[#7F8C8D]">
-                    <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
-                    <p>No new notifications</p>
+                    {showHistory ? (
+                      <>
+                        <History className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No notification history yet</p>
+                      </>
+                    ) : (
+                      <>
+                        <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                        <p className="text-sm">No new notifications</p>
+                        <button
+                          onClick={() => setShowHistory(true)}
+                          className="mt-2 text-xs text-[#3498DB] hover:underline"
+                        >
+                          View history →
+                        </button>
+                      </>
+                    )}
                   </div>
                 ) : (
-                  notifications.map((notification) => (
-                    <motion.div
-                      key={notification.id}
-                      initial={{ opacity: 0, x: -10 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      exit={{ opacity: 0, x: 10 }}
-                      className="p-4 border-b border-[#ECF0F1] last:border-0 hover:bg-[#F8FAFE] transition-colors"
-                    >
-                      <div className="flex items-start gap-3">
-                        <span className="text-xl">{notification.emoji}</span>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2">
-                            <p className="font-medium text-sm text-[#2C3E50]">
-                              {notification.title}
-                            </p>
-                          </div>
-                          <p className="text-sm text-[#7F8C8D]">
-                            {notification.message}
-                          </p>
-                          <div className="flex items-center gap-2 mt-1">
-                            {notification.amountCents && (
-                              <p className="text-sm font-mono font-bold text-[#27AE60]">
-                                +{formatMoney(notification.amountCents)}
+                  notifications.map((notification) => {
+                    const isRead = 'readAt' in notification && !!notification.readAt;
+                    return (
+                      <motion.div
+                        key={notification.id}
+                        initial={{ opacity: 0, x: -10 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        exit={{ opacity: 0, x: 10 }}
+                        className={`p-4 border-b border-[#ECF0F1] last:border-0 hover:bg-[#F8FAFE] transition-colors ${
+                          isRead ? 'opacity-60' : ''
+                        }`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <span className="text-xl">{notification.emoji}</span>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2">
+                              <p className={`font-medium text-sm text-[#2C3E50] ${isRead ? 'font-normal' : ''}`}>
+                                {notification.title}
                               </p>
-                            )}
-                            <span className="flex items-center gap-1 text-xs text-[#BDC3C7]">
-                              <Clock className="w-3 h-3" />
-                              {formatDate(notification.createdAt)}
-                            </span>
+                              {!isRead && (
+                                <span className="w-2 h-2 bg-[#2ECC71] rounded-full flex-shrink-0" />
+                              )}
+                            </div>
+                            <p className="text-sm text-[#7F8C8D]">
+                              {notification.message}
+                            </p>
+                            <div className="flex items-center gap-2 mt-1">
+                              {notification.amountCents && (
+                                <p className={`text-sm font-mono font-bold ${isRead ? 'text-[#95A5A6]' : 'text-[#27AE60]'}`}>
+                                  +{formatMoney(notification.amountCents)}
+                                </p>
+                              )}
+                              <span className="flex items-center gap-1 text-xs text-[#BDC3C7]">
+                                <Clock className="w-3 h-3" />
+                                {formatDate(notification.createdAt)}
+                              </span>
+                            </div>
                           </div>
+                          {!isRead && (
+                            <button
+                              onClick={() => markAsRead(notification.id)}
+                              className="p-1 hover:bg-[#ECF0F1] rounded-lg flex-shrink-0"
+                              title="Mark as read"
+                            >
+                              <X className="w-4 h-4 text-[#BDC3C7]" />
+                            </button>
+                          )}
                         </div>
-                        <button
-                          onClick={() => markAsRead(notification.id)}
-                          className="p-1 hover:bg-[#ECF0F1] rounded-lg"
-                        >
-                          <X className="w-4 h-4 text-[#BDC3C7]" />
-                        </button>
-                      </div>
-                    </motion.div>
-                  ))
+                      </motion.div>
+                    );
+                  })
                 )}
               </div>
+
+              {/* Footer — only show in history mode when there are results */}
+              {showHistory && notifications.length > 0 && hasUnread && (
+                <div className="p-3 border-t border-[#ECF0F1] bg-[#F8FAFE]">
+                  <button
+                    onClick={markAllAsRead}
+                    className="w-full flex items-center justify-center gap-2 py-2 px-3 text-sm text-[#3498DB] hover:bg-white rounded-xl transition-colors"
+                  >
+                    <CheckCheck className="w-4 h-4" />
+                    Mark all as read
+                  </button>
+                </div>
+              )}
             </motion.div>
           </>
         )}

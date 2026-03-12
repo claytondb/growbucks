@@ -6,7 +6,7 @@ import { createServerSupabaseClient } from '@/lib/supabase';
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSupabase = () => createServerSupabaseClient() as any;
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const session = await getServerSession(authOptions);
     
@@ -14,16 +14,25 @@ export async function GET() {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    const { searchParams } = new URL(request.url);
+    const includeRead = searchParams.get('include_read') === 'true';
+    const limit = Math.min(parseInt(searchParams.get('limit') ?? '20', 10), 50);
+
     const supabase = getSupabase();
 
-    // Fetch unread notifications
-    const { data: notifications, error } = await supabase
+    // Build query — optionally include read notifications for history view
+    let query = supabase
       .from('notifications')
       .select('*')
       .eq('user_id', session.user.id)
-      .is('read_at', null)
       .order('created_at', { ascending: false })
-      .limit(20);
+      .limit(limit);
+
+    if (!includeRead) {
+      query = query.is('read_at', null);
+    }
+
+    const { data: notifications, error } = await query;
 
     if (error) {
       console.error('Error fetching notifications:', error);
@@ -34,7 +43,7 @@ export async function GET() {
       });
     }
 
-    // Count unread
+    // Always return unread count separately (used for badge)
     const { count } = await supabase
       .from('notifications')
       .select('*', { count: 'exact', head: true })
