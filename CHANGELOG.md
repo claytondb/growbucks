@@ -2,6 +2,20 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.5] - 2026-03-12
+
+### Improved
+- **Notification History View** - The notification bell now has Unread / History tabs
+  - **Unread tab**: Shows only unread notifications (existing behavior) with a green dot indicator
+  - **History tab**: Shows last 40 notifications (read + unread) so nothing gets lost
+  - Read notifications shown at reduced opacity to distinguish from new ones
+  - "Mark all read" button in history footer when unread items exist
+  - Empty unread state now includes a "View history →" shortcut
+  - API updated to accept `?include_read=true&limit=N` for history fetches
+- Build verified clean ✅, all 191 tests passing
+
+---
+
 ## [1.6.4] - 2026-03-12
 
 ### Improved

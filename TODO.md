@@ -37,7 +37,7 @@ Last updated: 2026-03-09
 
 - [ ] Push notifications for interest earned
 - [ ] Email digest option for parents
-- [ ] In-app notification center improvements
+- [x] **In-app notification center improvements** (2026-03-12) - Added Unread/History tabs, read state indicators
 
 ### 2. Recurring Deposits ✅ DONE (2026-03-06)
 **Priority:** HIGH
@@ -94,6 +94,6 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.6.4
+- **Version:** 1.6.5
 - **Tests:** 191 passing
 - **Build:** Clean ✅
