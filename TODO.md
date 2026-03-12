@@ -55,9 +55,10 @@ Last updated: 2026-03-09
 ### 3. Learning Content
 **Priority:** MEDIUM
 
-- [ ] Interactive lessons about compound interest
+- [x] **Learning library foundation** (2026-03-12) - `src/lib/lessons.ts` with 6 lessons, age-group tiers, quiz engine, XP rewards, progress helpers (54 tests)
+- [ ] Learning UI - `/dashboard/learn` page using the lessons library
 - [ ] Achievement badges for completing lessons
-- [ ] Age-appropriate content tiers
+- [ ] Age-appropriate content tiers (foundation built, needs UI wiring)
 
 ---
 
