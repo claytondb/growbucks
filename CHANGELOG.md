@@ -2,6 +2,17 @@
 
 All notable changes to GrowBucks.
 
+## [1.6.4] - 2026-03-12
+
+### Improved
+- **Global Notification Bell** - NotificationCenter is now persistent across all dashboard pages
+  - Desktop: Bell appears at the bottom of the sidebar (previously only on home page)
+  - Mobile: New compact top bar shows GrowBucks logo + notification bell on every page
+  - Eliminates the UX gap where Growth, Goals, Settings, and Allowances pages had no way to access notifications
+  - Build verified clean ✅
+
+---
+
 ## [1.6.3] - 2026-03-10
 
 ### Fixed
