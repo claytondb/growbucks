@@ -1,7 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
-import { Trophy, Lock, TrendingUp, Target, Coins, Calendar } from 'lucide-react';
+import { Trophy, Lock, TrendingUp, Target, Coins, Calendar, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export interface Achievement {
@@ -9,7 +9,7 @@ export interface Achievement {
   name: string;
   description: string;
   emoji: string;
-  category: 'savings' | 'growth' | 'goals' | 'streaks';
+  category: 'savings' | 'growth' | 'goals' | 'streaks' | 'learning';
   unlocked: boolean;
   unlockedAt?: string;
   progress?: number;
@@ -126,6 +126,46 @@ export const ACHIEVEMENTS: Omit<Achievement, 'unlocked' | 'unlockedAt' | 'progre
     category: 'streaks',
     maxProgress: 30,
   },
+
+  // Learning
+  {
+    id: 'first_lesson',
+    name: 'Brain Spark',
+    description: 'Complete your first lesson',
+    emoji: '🧠',
+    category: 'learning',
+  },
+  {
+    id: 'three_lessons',
+    name: 'Knowledge Seeker',
+    description: 'Complete 3 lessons',
+    emoji: '📚',
+    category: 'learning',
+    maxProgress: 3,
+  },
+  {
+    id: 'all_lessons',
+    name: 'Money Master',
+    description: 'Complete all lessons for your age group',
+    emoji: '🎓',
+    category: 'learning',
+    maxProgress: 6,
+  },
+  {
+    id: 'perfect_quiz',
+    name: 'Quiz Champion',
+    description: 'Score 100% on any quiz',
+    emoji: '⭐',
+    category: 'learning',
+  },
+  {
+    id: 'xp_100',
+    name: 'XP Collector',
+    description: 'Earn 100 XP from lessons',
+    emoji: '🏅',
+    category: 'learning',
+    maxProgress: 100,
+  },
 ];
 
 // Calculate achievements based on child data
@@ -137,7 +177,20 @@ export function calculateAchievements(data: {
   hasEarnedInterest: boolean;
   daysSinceLastWithdraw: number;
   daysActive: number;
+  /** Number of lessons completed */
+  lessonsCompleted?: number;
+  /** Total XP earned from lessons */
+  xpEarned?: number;
+  /** Whether any quiz was completed with 100% score */
+  hasPerfectQuiz?: boolean;
+  /** Total lessons available for this child's age group */
+  totalLessons?: number;
 }): Achievement[] {
+  const lessonsCompleted = data.lessonsCompleted ?? 0;
+  const xpEarned = data.xpEarned ?? 0;
+  const hasPerfectQuiz = data.hasPerfectQuiz ?? false;
+  const totalLessons = data.totalLessons ?? 6;
+
   return ACHIEVEMENTS.map((achievement) => {
     let unlocked = false;
     let progress: number | undefined;
@@ -191,6 +244,25 @@ export function calculateAchievements(data: {
       case 'month_no_withdraw':
         unlocked = data.daysSinceLastWithdraw >= 30;
         progress = Math.min(data.daysSinceLastWithdraw, 30);
+        break;
+      // Learning achievements
+      case 'first_lesson':
+        unlocked = lessonsCompleted >= 1;
+        break;
+      case 'three_lessons':
+        unlocked = lessonsCompleted >= 3;
+        progress = Math.min(lessonsCompleted, 3);
+        break;
+      case 'all_lessons':
+        unlocked = lessonsCompleted >= totalLessons;
+        progress = Math.min(lessonsCompleted, totalLessons);
+        break;
+      case 'perfect_quiz':
+        unlocked = hasPerfectQuiz;
+        break;
+      case 'xp_100':
+        unlocked = xpEarned >= 100;
+        progress = Math.min(xpEarned, 100);
         break;
     }
 
@@ -287,6 +359,7 @@ export function AchievementsGrid({ achievements, className }: AchievementsGridPr
     { id: 'growth', name: 'Growth', icon: TrendingUp },
     { id: 'goals', name: 'Goals', icon: Target },
     { id: 'streaks', name: 'Streaks', icon: Calendar },
+    { id: 'learning', name: 'Learning', icon: BookOpen },
   ];
 
   const unlockedCount = achievements.filter(a => a.unlocked).length;

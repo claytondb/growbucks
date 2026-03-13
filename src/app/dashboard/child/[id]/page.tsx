@@ -28,7 +28,14 @@ import { AchievementsGrid, calculateAchievements } from '@/components/Achievemen
 import FunFactCard from '@/components/FunFacts';
 import FinancialTip from '@/components/FinancialTip';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
+import { LESSONS } from '@/lib/lessons';
 import { Child, Transaction } from '@/types/database';
+
+interface LessonProgressRow {
+  lesson_id: string;
+  completed: boolean;
+  quiz_score: number | null;
+}
 
 interface ChildWithDetails extends Child {
   transactions: Transaction[];
@@ -55,6 +62,7 @@ export default function ChildDetailPage() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState({ title: '', message: '' });
+  const [lessonProgress, setLessonProgress] = useState<LessonProgressRow[]>([]);
 
   const fetchChild = useCallback(async () => {
     try {
@@ -74,13 +82,32 @@ export default function ChildDetailPage() {
     }
   }, [childId, router]);
 
+  const fetchLessonProgress = useCallback(async () => {
+    try {
+      const res = await fetch(`/api/lesson-progress?childId=${childId}`);
+      if (res.ok) {
+        const data = await res.json();
+        // Parent API returns flat array with child_id field
+        setLessonProgress(
+          (data.progress ?? []).filter(
+            (p: LessonProgressRow & { child_id?: string }) =>
+              !p.child_id || p.child_id === childId
+          )
+        );
+      }
+    } catch {
+      // Non-critical — achievements simply show 0 learning progress
+    }
+  }, [childId]);
+
   useEffect(() => {
     if (status === 'unauthenticated') {
       router.push('/login');
     } else if (status === 'authenticated') {
       fetchChild();
+      fetchLessonProgress();
     }
-  }, [status, router, fetchChild]);
+  }, [status, router, fetchChild, fetchLessonProgress]);
 
   // Real-time balance animation
   useEffect(() => {
@@ -373,6 +400,15 @@ export default function ChildDetailPage() {
                   hasEarnedInterest: (child.total_interest_earned || 0) > 0,
                   daysSinceLastWithdraw: child.days_since_last_withdraw || 0,
                   daysActive: child.days_active || 1,
+                  lessonsCompleted: lessonProgress.filter((p) => p.completed).length,
+                  xpEarned: lessonProgress
+                    .filter((p) => p.completed)
+                    .reduce((sum, p) => {
+                      const lesson = LESSONS.find((l) => l.id === p.lesson_id);
+                      return sum + (lesson?.xpReward ?? 0);
+                    }, 0),
+                  hasPerfectQuiz: lessonProgress.some((p) => p.quiz_score === 100),
+                  totalLessons: LESSONS.length,
                 })}
               />
             </CardContent>
