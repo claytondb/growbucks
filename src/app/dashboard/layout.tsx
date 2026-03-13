@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, BarChart3, PlusCircle, Target, User, Sprout } from 'lucide-react';
+import { Home, BarChart3, PlusCircle, Target, User, Sprout, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { NotificationCenter } from '@/components/InterestNotification';
 
@@ -11,6 +11,7 @@ const navItems = [
   { href: '/dashboard/growth', icon: BarChart3, label: 'Growth' },
   { href: '/dashboard/add', icon: PlusCircle, label: 'Add', isCenter: true },
   { href: '/dashboard/goals', icon: Target, label: 'Goals' },
+  { href: '/dashboard/learn', icon: BookOpen, label: 'Learn' },
   { href: '/dashboard/settings', icon: User, label: 'Profile' },
 ];
 
