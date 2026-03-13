@@ -40,7 +40,7 @@ const AGE_GROUP_LABELS: Record<AgeGroup, string> = {
   teen: 'Ages 13+',
 };
 
-function getProgress(): LessonProgress[] {
+function getLocalProgress(): LessonProgress[] {
   if (typeof window === 'undefined') return [];
   try {
     const raw = localStorage.getItem('growbucks_lesson_progress');
@@ -50,8 +50,16 @@ function getProgress(): LessonProgress[] {
   }
 }
 
+function saveLocalProgress(progress: LessonProgress[]) {
+  try {
+    localStorage.setItem('growbucks_lesson_progress', JSON.stringify(progress));
+  } catch {
+    // ignore
+  }
+}
+
 export default function LearnPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const [progress, setProgress] = useState<LessonProgress[]>([]);
   const [ageFilter, setAgeFilter] = useState<AgeGroup | 'all'>('all');
@@ -62,9 +70,42 @@ export default function LearnPage() {
     }
   }, [status, router]);
 
+  // Load progress: prefer server data for child users, fall back to localStorage
   useEffect(() => {
-    setProgress(getProgress());
-  }, []);
+    if (status !== 'authenticated') return;
+
+    const isChild = (session?.user as { isChild?: boolean })?.isChild;
+
+    if (isChild) {
+      fetch('/api/lesson-progress')
+        .then((r) => r.json())
+        .then(({ progress: serverProgress }) => {
+          if (Array.isArray(serverProgress) && serverProgress.length > 0) {
+            // Normalize server format to LessonProgress shape
+            const normalized: LessonProgress[] = serverProgress.map(
+              (p: { lesson_id: string; completed: boolean; quiz_score: number | null; completed_at: string | null }) => ({
+                lessonId: p.lesson_id,
+                completed: p.completed,
+                quizScore: p.quiz_score,
+                completedAt: p.completed_at,
+              })
+            );
+            setProgress(normalized);
+            // Keep localStorage in sync as fallback
+            saveLocalProgress(normalized);
+          } else {
+            // Nothing on server yet — seed from localStorage
+            setProgress(getLocalProgress());
+          }
+        })
+        .catch(() => {
+          // Network error — fall back to localStorage
+          setProgress(getLocalProgress());
+        });
+    } else {
+      setProgress(getLocalProgress());
+    }
+  }, [status, session]);
 
   const completedIds = new Set(progress.filter((p) => p.completed).map((p) => p.lessonId));
 

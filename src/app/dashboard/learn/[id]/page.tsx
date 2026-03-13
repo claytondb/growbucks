@@ -405,7 +405,7 @@ function DonePhase({
 // ---------------------------------------------------------------------------
 
 export default function LessonPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
   const lessonId = typeof params?.id === 'string' ? params.id : '';
@@ -433,8 +433,22 @@ export default function LessonPage() {
 
   const handleQuizComplete = (score: number, _answers: number[]) => {
     setQuizScore(score);
+    // Always save to localStorage as the local source of truth
     markComplete(lessonId, score);
     setPhase('done');
+
+    // Also persist to server for cross-device sync (child users only)
+    const isChild = (session?.user as { isChild?: boolean })?.isChild;
+    if (isChild) {
+      fetch('/api/lesson-progress', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lessonId, completed: true, quizScore: score }),
+      }).catch((err) => {
+        // Non-fatal — localStorage already has the record
+        console.warn('Failed to sync lesson progress to server:', err);
+      });
+    }
   };
 
   const handleRetakeQuiz = () => {
