@@ -56,9 +56,9 @@ Last updated: 2026-03-09
 **Priority:** MEDIUM
 
 - [x] **Learning library foundation** (2026-03-12) - `src/lib/lessons.ts` with 6 lessons, age-group tiers, quiz engine, XP rewards, progress helpers (54 tests)
-- [ ] Learning UI - `/dashboard/learn` page using the lessons library
+- [x] **Learning UI** (2026-03-13) - `/dashboard/learn` listing page + `/dashboard/learn/[id]` lesson reader with paginated content, quiz flow, instant feedback, XP celebration, localStorage progress
 - [ ] Achievement badges for completing lessons
-- [ ] Age-appropriate content tiers (foundation built, needs UI wiring)
+- [ ] Age-appropriate content tiers (foundation built, UI live — need per-child progress API)
 
 ---
 
@@ -95,6 +95,6 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.6.5
+- **Version:** 1.6.6
 - **Tests:** 191 passing
 - **Build:** Clean ✅
