@@ -57,7 +57,7 @@ Last updated: 2026-03-09
 
 - [x] **Learning library foundation** (2026-03-12) - `src/lib/lessons.ts` with 6 lessons, age-group tiers, quiz engine, XP rewards, progress helpers (54 tests)
 - [x] **Learning UI** (2026-03-13) - `/dashboard/learn` listing page + `/dashboard/learn/[id]` lesson reader with paginated content, quiz flow, instant feedback, XP celebration, localStorage progress
-- [ ] Achievement badges for completing lessons
+- [x] **Achievement badges for completing lessons** (2026-03-13) — 5 new "Learning" achievements (Brain Spark, Knowledge Seeker, Money Master, Quiz Champion, XP Collector); child detail page fetches lesson progress and passes to calculateAchievements
 - [x] **Per-child progress API** (2026-03-13) — `/api/lesson-progress` GET+POST, Supabase migration 005, cross-device sync with localStorage fallback (18 tests)
 
 ---
@@ -98,3 +98,4 @@ Last updated: 2026-03-09
 - **Version:** 1.6.6
 - **Tests:** 263 passing
 - **Build:** Clean ✅
+- **Last nightly work:** 2026-03-13 — Learning achievement badges
