@@ -12,13 +12,13 @@ const getSupabase = () => createServerSupabaseClient() as any;
  * Update the auto-split percentage for a child.
  * Body: { split_save_percent: number }
  */
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || session.user.isChild) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id: childId } = params;
+  const { id: childId } = await context.params;
   const body = await request.json();
   const { split_save_percent } = body;
 
@@ -76,13 +76,13 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
  * Release a portion of savings back to the spending bucket.
  * Body: { release_cents: number }
  */
-export async function POST(request: NextRequest, { params }: { params: { id: string } }) {
+export async function POST(request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || session.user.isChild) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id: childId } = params;
+  const { id: childId } = await context.params;
   const body = await request.json();
   const { release_cents } = body;
 
@@ -163,13 +163,13 @@ export async function POST(request: NextRequest, { params }: { params: { id: str
  * GET /api/children/[id]/split-savings
  * Get current split settings and balance breakdown for a child.
  */
-export async function GET(_request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(_request: NextRequest, context: { params: Promise<{ id: string }> }) {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id || session.user.isChild) {
     return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
-  const { id: childId } = params;
+  const { id: childId } = await context.params;
   const supabase = getSupabase();
 
   const { data: user } = await supabase

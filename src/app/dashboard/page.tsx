@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import ChildCard from '@/components/ChildCard';
 import AddChildModal from '@/components/modals/AddChildModal';
 import FunFactCard from '@/components/FunFacts';
+import LeaderboardCard from '@/components/LeaderboardCard';
 import { formatMoney, getGreeting } from '@/lib/utils';
 import { Child } from '@/types/database';
 
@@ -259,6 +260,18 @@ export default function DashboardPage() {
             </div>
           )}
         </div>
+
+        {/* Sibling Leaderboard (only shows when 2+ children with different scores) */}
+        {children.length >= 2 && (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.4 }}
+            className="mb-6"
+          >
+            <LeaderboardCard />
+          </motion.div>
+        )}
 
         {/* Fun Fact */}
         <motion.div
