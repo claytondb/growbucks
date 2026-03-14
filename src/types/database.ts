@@ -22,8 +22,11 @@ export interface Child {
   pin_hash: string;
   avatar_url: string | null;
   balance_cents: number;
+  /** Locked savings bucket (auto-split deposits). See migration 007. */
+  save_balance_cents: number;
   interest_rate_daily: number; // e.g., 0.01 for 1%
   interest_paused: boolean;
+  /** @deprecated Use save_balance_cents / balance_cents instead */
   locked_percentage: number; // 0-100, percentage of balance that can't be withdrawn
   last_interest_at: string;
   created_at: string;
@@ -33,7 +36,7 @@ export interface Child {
 export interface Transaction {
   id: string;
   child_id: string;
-  type: 'deposit' | 'withdrawal' | 'interest' | 'adjustment';
+  type: 'deposit' | 'withdrawal' | 'interest' | 'adjustment' | 'savings_deposit' | 'savings_release';
   amount_cents: number;
   balance_after_cents: number;
   description: string | null;
@@ -51,6 +54,8 @@ export interface ChildSettings {
   withdrawal_limit_daily_cents: number | null;
   withdrawal_limit_weekly_cents: number | null;
   withdrawal_cooldown_hours: number;
+  /** Auto-split: 0–90% of each deposit is routed to the locked savings bucket. */
+  split_save_percent: number;
   created_at: string;
   updated_at: string;
 }

@@ -27,6 +27,7 @@ import { CelebrationOverlay } from '@/components/Confetti';
 import { AchievementsGrid, calculateAchievements } from '@/components/Achievements';
 import FunFactCard from '@/components/FunFacts';
 import FinancialTip from '@/components/FinancialTip';
+import SplitSavingsCard from '@/components/SplitSavingsCard';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { LESSONS } from '@/lib/lessons';
 import { Child, Transaction } from '@/types/database';
@@ -64,6 +65,7 @@ export default function ChildDetailPage() {
   const [showCelebration, setShowCelebration] = useState(false);
   const [celebrationMessage, setCelebrationMessage] = useState({ title: '', message: '' });
   const [lessonProgress, setLessonProgress] = useState<LessonProgressRow[]>([]);
+  const [splitPercent, setSplitPercent] = useState(0);
 
   const fetchChild = useCallback(async () => {
     try {
@@ -72,6 +74,11 @@ export default function ChildDetailPage() {
         const data = await res.json();
         setChild(data);
         setDisplayBalance(data.balance_cents);
+        // Load split-savings percent in parallel (non-blocking)
+        fetch(`/api/children/${childId}/split-savings`)
+          .then(r => r.ok ? r.json() : null)
+          .then(d => { if (d?.split_save_percent !== undefined) setSplitPercent(d.split_save_percent); })
+          .catch(() => {});
       } else {
         router.push('/dashboard');
       }
@@ -264,7 +271,11 @@ export default function ChildDetailPage() {
         >
           <Wallet
             balanceCents={child.balance_cents}
-            lockedPercentage={child.locked_percentage || 0}
+            lockedPercentage={
+              child.balance_cents > 0
+                ? Math.round(((child.save_balance_cents ?? 0) / child.balance_cents) * 100)
+                : 0
+            }
             interestRate={child.interest_rate_daily}
             lastInterestAt={new Date(child.last_interest_at)}
             isPaused={child.interest_paused}
@@ -272,6 +283,24 @@ export default function ChildDetailPage() {
               await handleWithdraw({ amount_cents: amountCents, description: 'Quick withdrawal from wallet' });
             }}
             isParent={true}
+          />
+        </motion.div>
+
+        {/* Split Savings — parent view only */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.04 }}
+          className="mb-6"
+        >
+          <SplitSavingsCard
+            childId={childId}
+            childName={child.name}
+            balanceCents={child.balance_cents}
+            saveBalanceCents={child.save_balance_cents ?? 0}
+            currentSplitPercent={splitPercent}
+            onSplitChange={setSplitPercent}
+            onSavingsRelease={() => fetchChild()}
           />
         </motion.div>
 

@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Sparkles, ArrowUpRight, Settings2 } from 'lucide-react';
+import { Coins, Sparkles, ArrowUpRight, Settings2, PiggyBank, Unlock } from 'lucide-react';
 import { formatMoney, formatDate, cn } from '@/lib/utils';
 import { Transaction } from '@/types/database';
 
@@ -44,6 +44,22 @@ const transactionConfig = {
     label: 'Adjustment',
     amountColor: 'text-[#7F8C8D]',
     sign: '',
+  },
+  savings_deposit: {
+    icon: PiggyBank,
+    iconBg: 'bg-blue-500/10',
+    iconColor: 'text-blue-400',
+    label: 'Auto-saved',
+    amountColor: 'text-blue-400',
+    sign: '+',
+  },
+  savings_release: {
+    icon: Unlock,
+    iconBg: 'bg-[#2ECC71]/10',
+    iconColor: 'text-[#2ECC71]',
+    label: 'Savings released',
+    amountColor: 'text-[#2ECC71]',
+    sign: '+',
   },
 };
 
