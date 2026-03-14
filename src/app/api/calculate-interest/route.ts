@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createServerSupabaseClient } from '@/lib/supabase';
-import { Child } from '@/types/database';
+import { Child, InterestPromotion } from '@/types/database';
+import { selectBestPromotion, getEffectiveRate } from '@/lib/promotions';
 
 // Interest transaction to be inserted
 interface InterestTransaction {
@@ -48,6 +49,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ processed: 0, message: 'No accounts need interest' });
   }
 
+  // Fetch all currently-active promotions in one query (across all users)
+  // selectBestPromotion will match per-child from this list.
+  const { data: promotionData } = await supabase
+    .from('interest_promotions')
+    .select('*')
+    .lte('starts_at', now.toISOString())
+    .gt('ends_at', now.toISOString());
+
+  const activePromotions = (promotionData ?? []) as InterestPromotion[];
+
   let processed = 0;
   let totalInterest = 0;
   const errors: string[] = [];
@@ -67,12 +78,19 @@ export async function POST(request: NextRequest) {
       let currentBalance = child.balance_cents;
       const transactions: InterestTransaction[] = [];
 
+      // Determine effective rate (base + any active promotion bonus)
+      const promotion = selectBestPromotion(child.id, activePromotions);
+      const effectiveRate = getEffectiveRate(child.interest_rate_daily, promotion);
+      const rateLabel = promotion
+        ? `${(child.interest_rate_daily * 100).toFixed(1)}% + ${(promotion.bonus_rate_daily * 100).toFixed(2)}% bonus`
+        : `${(child.interest_rate_daily * 100).toFixed(1)}%`;
+
       // Apply interest for each missed day
       for (let i = 0; i < daysMissed; i++) {
         const interestDate = new Date(lastInterest);
         interestDate.setDate(interestDate.getDate() + i + 1);
 
-        const interestCents = Math.floor(currentBalance * child.interest_rate_daily);
+        const interestCents = Math.floor(currentBalance * effectiveRate);
 
         if (interestCents > 0) {
           currentBalance += interestCents;
@@ -83,7 +101,7 @@ export async function POST(request: NextRequest) {
             type: 'interest',
             amount_cents: interestCents,
             balance_after_cents: currentBalance,
-            description: `Daily interest (${(child.interest_rate_daily * 100).toFixed(1)}%)`,
+            description: `Daily interest (${rateLabel})`,
             status: 'completed',
             processed_at: interestDate.toISOString(),
             created_at: interestDate.toISOString(),

@@ -95,6 +95,21 @@ export interface Notification {
   created_at: string;
 }
 
+// Interest rate promotion (bonus rate period)
+export interface InterestPromotion {
+  id: string;
+  user_id: string;
+  /** null → applies to all of the parent's children */
+  child_id: string | null;
+  name: string;
+  /** Bonus daily rate, e.g. 0.005 = +0.5%/day */
+  bonus_rate_daily: number;
+  starts_at: string;
+  ends_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
 // Child activity for streak tracking
 export interface ChildActivity {
   id: string;
