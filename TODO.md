@@ -70,7 +70,7 @@ Last updated: 2026-03-09
 - [ ] Gift deposits from relatives
 
 ### Gamification
-- [ ] Streak tracking (consecutive days saving)
+- [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
 - [ ] Leaderboards (opt-in, among siblings)
 - [ ] Seasonal challenges
 
@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.6.6
-- **Tests:** 263 passing
+- **Version:** 1.7.0
+- **Tests:** 289 passing
 - **Build:** Clean ✅
-- **Last nightly work:** 2026-03-13 — Learning achievement badges
+- **Last nightly work:** 2026-03-14 — Real consecutive-day streak tracking

@@ -2,6 +2,26 @@
 
 All notable changes to GrowBucks.
 
+## [1.7.0] - 2026-03-14
+
+### Added
+- **Consecutive-day streak tracking** — `src/lib/streaks.ts` with full utility library:
+  - `calculateConsecutiveStreak()` — computes real consecutive login days from DB
+  - `isStreakActive()` — checks if streak is live (today or yesterday)
+  - `daysUntilStreakExpires()` — urgency helper for future UI nudges
+- **POST /api/activity** — Idempotent endpoint that records daily child activity in `child_activity` table; called automatically on child dashboard load
+- **Enhanced children API** — `GET /api/children/[id]` now returns:
+  - `total_interest_earned`, `goals_created`, `goals_achieved`, `days_since_last_withdraw`, `login_streak`, `days_active`
+  - All data the achievement system needs was previously missing from the API response
+
+### Fixed
+- **Week Warrior achievement** now reflects real consecutive login days (was using a placeholder fallback of `days_active: 1`)
+- Achievement system now has full data: balances, goals, interest, and login streaks all properly wired from the API
+
+### Tests
+- +26 new unit tests for streak logic (29 total across 5 describe blocks)
+- Total: **289 tests** (was 263)
+
 ## [1.6.5] - 2026-03-12
 
 ### Improved
