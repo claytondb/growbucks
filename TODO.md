@@ -71,7 +71,7 @@ Last updated: 2026-03-09
 
 ### Gamification
 - [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
-- [ ] Leaderboards (opt-in, among siblings)
+- [x] **Sibling leaderboard** (2026-03-14) — 4 categories (balance, interest, savings rate, growth %); ranked with medals 🥇🥈🥉; tie detection; animated tabbed UI on parent dashboard; 29 tests
 - [ ] Seasonal challenges
 
 ### Advanced Features
@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.9.0
-- **Tests:** 403 passing
+- **Version:** 2.0.0
+- **Tests:** 432 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-14 — Split savings feature (spend/save buckets, auto-split on deposits)
+- **Last nightly work:** 2026-03-14 — Sibling leaderboard (4 categories, medals, tie detection); fixed Next.js 15+ async params build error in split-savings route

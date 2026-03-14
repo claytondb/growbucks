@@ -2,6 +2,35 @@
 
 All notable changes to GrowBucks.
 
+## [2.0.0] - 2026-03-14
+
+### Fixed
+- **Build error in split-savings route** — Updated `GET`, `POST`, and `PATCH` handlers in `/api/children/[id]/split-savings/route.ts` to use Next.js 15+ async params pattern (`context.params: Promise<{ id: string }>`) instead of the deprecated synchronous destructuring. This was causing TypeScript compilation to fail.
+
+### Added
+- **Sibling Leaderboard** — family ranking system for parents with 2+ children
+  - `src/lib/leaderboard.ts` — pure ranking engine with four categories:
+    - 💰 **Biggest Saver** — ranked by total balance
+    - 📈 **Top Earner This Month** — ranked by interest earned this month
+    - 🏦 **Best Saver %** — ranked by savings bucket percentage (split-savings)
+    - 🚀 **Fastest Growing** — ranked by % balance growth this month
+  - Tie detection: tied entries share the same rank and are marked `(tied)`
+  - Medal helpers: 🥇🥈🥉 for ranks 1-3
+  - `featuredLeaderboard()` — picks the most motivating category to spotlight
+  - `GET /api/leaderboard` — fetches children's stats from Supabase, builds and returns all non-tied leaderboards; returns empty for families with <2 children
+  - `src/components/LeaderboardCard.tsx` — animated parent-dashboard card with:
+    - Category selector tabs (only shown when multiple categories available)
+    - Animated entry rows with medals, child initials/avatar, name, and score
+    - AnimatePresence transitions when switching categories
+    - Auto-hides when no meaningful leaderboard exists
+  - Wired into parent dashboard (`/dashboard/page.tsx`) below children grid, only rendered for families with 2+ children
+
+### Tests
+- +29 new unit tests for leaderboard library (`src/lib/leaderboard.test.ts`)
+- Total: **432 tests** (was 403)
+
+---
+
 ## [1.8.0] - 2026-03-14
 
 ### Added
