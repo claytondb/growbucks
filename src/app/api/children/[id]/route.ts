@@ -3,6 +3,7 @@ import { getServerSession } from 'next-auth';
 import bcrypt from 'bcryptjs';
 import { authOptions } from '@/lib/auth';
 import { createServerSupabaseClient } from '@/lib/supabase';
+import { calculateConsecutiveStreak } from '@/lib/streaks';
 
 // Type definitions for database entities
 interface DbChild {
@@ -95,7 +96,7 @@ export async function GET(request: NextRequest, context: RouteContext) {
     .order('created_at', { ascending: false })
     .limit(100) as { data: DbTransaction[] | null };
 
-  // Calculate stats
+  // Calculate interest stats
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
   startOfMonth.setHours(0, 0, 0, 0);
@@ -111,11 +112,53 @@ export async function GET(request: NextRequest, context: RouteContext) {
     ?.filter((tx) => tx.type === 'interest' && new Date(tx.created_at) >= today)
     .reduce((sum, tx) => sum + tx.amount_cents, 0) || 0;
 
+  // --- Achievement stats ---
+
+  // Goals: count created and achieved
+  const { data: goals } = await supabase
+    .from('savings_goals')
+    .select('id, achieved_at')
+    .eq('child_id', id) as { data: { id: string; achieved_at: string | null }[] | null };
+
+  const goalsCreated = goals?.length ?? 0;
+  const goalsAchieved = goals?.filter((g) => g.achieved_at != null).length ?? 0;
+
+  // Days since last withdrawal (from child column or transaction history)
+  const lastWithdrawalAt: string | null = (child as DbChild & { last_withdrawal_at?: string | null }).last_withdrawal_at ?? null;
+  const lastWithdrawalTx = transactions?.find((tx) => tx.type === 'withdrawal');
+  const lastWithdrawDate = lastWithdrawalAt
+    ? new Date(lastWithdrawalAt)
+    : lastWithdrawalTx
+    ? new Date(lastWithdrawalTx.created_at)
+    : null;
+
+  const daysSinceLastWithdraw = lastWithdrawDate
+    ? Math.floor((Date.now() - lastWithdrawDate.getTime()) / (1000 * 60 * 60 * 24))
+    : 999; // Never withdrawn
+
+  // Login streak from child_activity table
+  const { data: activityRows } = await supabase
+    .from('child_activity')
+    .select('activity_date')
+    .eq('child_id', id)
+    .order('activity_date', { ascending: false })
+    .limit(60) as { data: { activity_date: string }[] | null };
+
+  const activityDates = activityRows?.map((r) => new Date(r.activity_date + 'T00:00:00Z')) ?? [];
+  const loginStreak = calculateConsecutiveStreak(activityDates);
+
   return NextResponse.json({
     ...child,
     transactions: transactions || [],
     interest_earned_today: interestToday,
     interest_earned_this_month: interestThisMonth,
+    // Achievement stats
+    total_interest_earned: (child as DbChild & { total_interest_earned_cents?: number }).total_interest_earned_cents ?? 0,
+    goals_created: goalsCreated,
+    goals_achieved: goalsAchieved,
+    days_since_last_withdraw: daysSinceLastWithdraw,
+    login_streak: loginStreak,
+    days_active: loginStreak, // backward-compat alias used by calculateAchievements
   });
 }
 

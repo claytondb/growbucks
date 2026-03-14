@@ -46,10 +46,11 @@ interface ChildWithDetails extends Child {
   goals_achieved?: number;
   days_since_last_withdraw?: number;
   days_active?: number;
+  login_streak?: number;
 }
 
 export default function ChildDetailPage() {
-  const { status } = useSession();
+  const { data: session, status } = useSession();
   const router = useRouter();
   const params = useParams();
   const childId = params.id as string;
@@ -99,6 +100,14 @@ export default function ChildDetailPage() {
       // Non-critical — achievements simply show 0 learning progress
     }
   }, [childId]);
+
+  // Record activity for streak tracking when a child views their own page
+  useEffect(() => {
+    if (status === 'authenticated' && session?.user?.isChild) {
+      // Fire-and-forget; non-critical
+      fetch('/api/activity', { method: 'POST' }).catch(() => {});
+    }
+  }, [status, session]);
 
   useEffect(() => {
     if (status === 'unauthenticated') {
@@ -399,7 +408,8 @@ export default function ChildDetailPage() {
                   goalsAchieved: child.goals_achieved || 0,
                   hasEarnedInterest: (child.total_interest_earned || 0) > 0,
                   daysSinceLastWithdraw: child.days_since_last_withdraw || 0,
-                  daysActive: child.days_active || 1,
+                  // Use real consecutive login streak (falls back to days_active)
+                  daysActive: child.login_streak ?? child.days_active ?? 1,
                   lessonsCompleted: lessonProgress.filter((p) => p.completed).length,
                   xpEarned: lessonProgress
                     .filter((p) => p.completed)
