@@ -76,7 +76,7 @@ Last updated: 2026-03-09
 
 ### Advanced Features
 - [ ] Interest rate "promotions" (bonus rate periods)
-- [ ] Virtual "jobs" system (chores → earnings)
+- [x] **Virtual jobs/chores system** (2026-03-14) — parents create chores with rewards, children submit completions, parents approve → earnings deposited; one_time vs recurring; full API with 68 tests (006_chores.sql migration)
 - [ ] Split savings (portion to spend, portion to save)
 - [ ] Charitable giving/donations feature
 

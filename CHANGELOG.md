@@ -2,6 +2,24 @@
 
 All notable changes to GrowBucks.
 
+## [1.8.0] - 2026-03-14
+
+### Added
+- **Virtual Chores/Jobs System** — parents create chores with rewards, children complete them, parents approve and earnings are automatically deposited
+  - `supabase/migrations/006_chores.sql` — new `chores` and `chore_completions` tables with RLS, indexes, cascade deletes
+  - `src/lib/chores.ts` — full type definitions (`Chore`, `ChoreCompletion`, `ChoreFrequency`, etc.), validation (`validateCreateChore`, `validateUpdateChore`, `validateSubmitCompletion`), business logic (`canSubmitCompletion`, `calculateTotalEarnings`, `sortChores`, `getPendingCompletions`), and formatting utilities
+  - **API routes:**
+    - `GET/POST /api/chores` — list chores for a child; create new chore (parent only)
+    - `GET/PATCH/DELETE /api/chores/[id]` — view, update, or archive a chore
+    - `POST /api/chores/[id]/complete` — child submits chore for parent review
+    - `GET /api/chores/completions` — parent views pending/all completions
+    - `PATCH /api/chores/completions/[id]` — parent approves or rejects a completion
+  - On approval: deposit transaction created, child balance updated; one_time chores auto-archived after completion
+
+### Tests
+- +68 new unit tests for chores library (`src/lib/chores.test.ts`)
+- Total: **357 tests** (was 289)
+
 ## [1.7.0] - 2026-03-14
 
 ### Added
