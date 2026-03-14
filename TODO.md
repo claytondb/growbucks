@@ -75,7 +75,7 @@ Last updated: 2026-03-09
 - [ ] Seasonal challenges
 
 ### Advanced Features
-- [ ] Interest rate "promotions" (bonus rate periods)
+- [x] **Interest rate promotions** (2026-03-14) — parents create limited-time bonus rate windows; child-specific beats family-wide; highest bonus wins; 59 tests (008_promotions.sql migration)
 - [x] **Virtual jobs/chores system** (2026-03-14) — parents create chores with rewards, children submit completions, parents approve → earnings deposited; one_time vs recurring; full API with 68 tests (006_chores.sql migration)
 - [x] **Split savings** (2026-03-14) — parent sets 0–90% auto-save on each deposit; separate spend/save buckets displayed on child detail page; parent can release savings back to spending; savings_deposit + savings_release transaction types; 007_split_savings.sql migration (46 tests)
 - [ ] Charitable giving/donations feature
@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.0.0
-- **Tests:** 432 passing
+- **Version:** 2.1.0
+- **Tests:** 491 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-14 — Sibling leaderboard (4 categories, medals, tie detection); fixed Next.js 15+ async params build error in split-savings route
+- **Last nightly work:** 2026-03-14 — Interest rate promotions system: bonus rate windows, child-specific vs family-wide priority, 59 tests (008_promotions.sql migration)
