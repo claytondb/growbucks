@@ -83,7 +83,7 @@ Last updated: 2026-03-09
 ### Reporting
 - [ ] Monthly summary emails
 - [ ] Year-end interest statement
-- [ ] Tax year export
+- [x] **Tax year export** (2026-03-14) — `GET /api/export/[year]`; JSON + CSV download; per-child monthly breakdown (interest, deposits, withdrawals, chore earnings, savings auto-deposits, starting/ending/peak balance); family totals; 58 tests
 
 ---
 
@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.1.0
-- **Tests:** 491 passing
+- **Version:** 2.2.0
+- **Tests:** 549 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-14 — Interest rate promotions system: bonus rate windows, child-specific vs family-wide priority, 59 tests (008_promotions.sql migration)
+- **Last nightly work:** 2026-03-14 — Tax year export: annual interest/transaction report per child, JSON + CSV API, monthly breakdown, 58 tests
