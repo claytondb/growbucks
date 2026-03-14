@@ -77,7 +77,7 @@ Last updated: 2026-03-09
 ### Advanced Features
 - [ ] Interest rate "promotions" (bonus rate periods)
 - [x] **Virtual jobs/chores system** (2026-03-14) — parents create chores with rewards, children submit completions, parents approve → earnings deposited; one_time vs recurring; full API with 68 tests (006_chores.sql migration)
-- [ ] Split savings (portion to spend, portion to save)
+- [x] **Split savings** (2026-03-14) — parent sets 0–90% auto-save on each deposit; separate spend/save buckets displayed on child detail page; parent can release savings back to spending; savings_deposit + savings_release transaction types; 007_split_savings.sql migration (46 tests)
 - [ ] Charitable giving/donations feature
 
 ### Reporting
@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 1.7.0
-- **Tests:** 289 passing
-- **Build:** Clean ✅
-- **Last nightly work:** 2026-03-14 — Real consecutive-day streak tracking
+- **Version:** 1.9.0
+- **Tests:** 403 passing
+- **Build:** Clean ✅ (zero TS errors)
+- **Last nightly work:** 2026-03-14 — Split savings feature (spend/save buckets, auto-split on deposits)
