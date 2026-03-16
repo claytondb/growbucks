@@ -36,7 +36,7 @@ export interface Child {
 export interface Transaction {
   id: string;
   child_id: string;
-  type: 'deposit' | 'withdrawal' | 'interest' | 'adjustment' | 'savings_deposit' | 'savings_release';
+  type: 'deposit' | 'withdrawal' | 'interest' | 'adjustment' | 'savings_deposit' | 'savings_release' | 'donation';
   amount_cents: number;
   balance_after_cents: number;
   description: string | null;
@@ -108,6 +108,22 @@ export interface InterestPromotion {
   ends_at: string;
   created_at: string;
   updated_at: string;
+}
+
+// Charitable donation pledge (child submits, parent approves)
+export interface DonationPledge {
+  id: string;
+  child_id: string;
+  cause_name: string;
+  message: string | null;
+  amount_cents: number;
+  status: 'pending' | 'approved' | 'rejected';
+  submitted_at: string;
+  reviewed_at: string | null;
+  reviewed_by: string | null;
+  rejection_reason: string | null;
+  transaction_id: string | null;
+  created_at: string;
 }
 
 // Child activity for streak tracking
@@ -210,6 +226,11 @@ export interface Database {
         Row: ChildActivity;
         Insert: Omit<ChildActivity, 'id'>;
         Update: Partial<Omit<ChildActivity, 'id'>>;
+      };
+      donation_pledges: {
+        Row: DonationPledge;
+        Insert: Omit<DonationPledge, 'id' | 'created_at'>;
+        Update: Partial<Omit<DonationPledge, 'id'>>;
       };
     };
   };

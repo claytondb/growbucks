@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Coins, Sparkles, ArrowUpRight, Settings2, PiggyBank, Unlock } from 'lucide-react';
+import { Coins, Sparkles, ArrowUpRight, Settings2, PiggyBank, Unlock, Heart } from 'lucide-react';
 import { formatMoney, formatDate, cn } from '@/lib/utils';
 import { Transaction } from '@/types/database';
 
@@ -60,6 +60,14 @@ const transactionConfig = {
     label: 'Savings released',
     amountColor: 'text-[#2ECC71]',
     sign: '+',
+  },
+  donation: {
+    icon: Heart,
+    iconBg: 'bg-pink-500/10',
+    iconColor: 'text-pink-400',
+    label: 'Donated',
+    amountColor: 'text-pink-400',
+    sign: '-',
   },
 };
 
