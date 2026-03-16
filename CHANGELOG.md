@@ -2,6 +2,27 @@
 
 All notable changes to GrowBucks.
 
+## [2.3.0] - 2026-03-16
+
+### Added
+- **Charitable Giving System** — children propose donations to causes they care about; parents review and approve or reject
+  - `src/lib/giving.ts` — full utility library with types, validation, balance helpers, milestone messages, and suggested causes
+  - `supabase/migrations/009_giving.sql` — new `donation_pledges` table with RLS; tracks cause name, message, amount, status, reviewer, and linked transaction
+  - `GET /api/giving` — parents see all children's pledges (filterable); children see only their own
+  - `POST /api/giving` — child submits a donation pledge; validates against spend balance; max 3 pending at a time
+  - `GET /api/giving/[id]` — view a single pledge
+  - `PATCH /api/giving/[id]` — parent approves (deducts balance + creates transaction) or rejects (records reason)
+  - `DELETE /api/giving/[id]` — child cancels a pending pledge
+  - `DonationPledge` interface added to `src/types/database.ts`
+  - Added `donation` to `Transaction.type` union
+  - `src/components/TransactionList.tsx` — donation entries render with a Heart icon (pink theme)
+
+### Tests
+- +51 new unit tests (`src/lib/giving.test.ts`)
+- Total: **600 tests** (was 549)
+
+---
+
 ## [2.0.0] - 2026-03-14
 
 ### Fixed
