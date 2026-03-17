@@ -95,7 +95,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.3.0
-- **Tests:** 600 passing
+- **Version:** 2.4.0
+- **Tests:** 634 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-16 — Charitable giving: donation pledge system, parent approval flow, donation transaction type, 51 tests
+- **Last nightly work:** 2026-03-17 — Unified pending-actions API + smart dashboard alert with color-coded chips for withdrawals/chores/donations, 34 tests

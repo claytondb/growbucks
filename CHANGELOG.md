@@ -2,6 +2,27 @@
 
 All notable changes to GrowBucks.
 
+## [2.4.0] - 2026-03-17
+
+### Added
+- **Unified Pending Actions API** — `GET /api/pending-actions` aggregates all items needing parent review in a single request: pending withdrawals, chore completion submissions, and charitable donation pledges
+  - Returns structured `{ total, withdrawals, choreCompletions, donations }` response
+  - Replaces the old `/api/pending-withdrawals`-only approach on the main dashboard
+- **Smart dashboard alert card** — parent dashboard now shows a rich breakdown instead of a plain "N withdrawals" message:
+  - Color-coded clickable chips: 🟠 withdrawals → `/dashboard/transactions`, 🟣 chores → child detail page, 🩷 donations → child detail page
+  - Smart routing: single-child items navigate directly to that child's page; multi-child items go to dashboard
+  - Summary text (e.g. "2 withdrawals, 1 chore — tap to review") below the chips
+- `src/lib/pending-actions.ts` — utility library with pure functions:
+  - `flattenPendingActions` / `groupByChild` / `countByType`
+  - `pendingActionsSummary` / `actionTypeIcon` / `actionTypeLabel` / `actionReviewPath`
+  - `hasPendingActions` / `oldestPendingAction` / `totalPendingAmountCents` / `emptyPendingActions`
+
+### Tests
+- +34 new unit tests (`src/lib/pending-actions.test.ts`)
+- Total: **634 tests** (was 600)
+
+---
+
 ## [2.3.0] - 2026-03-16
 
 ### Added
