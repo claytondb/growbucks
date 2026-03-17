@@ -4,7 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { Plus, TrendingUp, Wallet, Users, AlertCircle } from 'lucide-react';
+import { Plus, TrendingUp, Wallet, Users, AlertCircle, ArrowDownCircle, CheckSquare, Heart } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import ChildCard from '@/components/ChildCard';
@@ -13,18 +13,15 @@ import FunFactCard from '@/components/FunFacts';
 import LeaderboardCard from '@/components/LeaderboardCard';
 import { formatMoney, getGreeting } from '@/lib/utils';
 import { Child } from '@/types/database';
+import {
+  type PendingActionsData,
+  emptyPendingActions,
+  pendingActionsSummary,
+  actionReviewPath,
+} from '@/lib/pending-actions';
 
 interface ChildWithStats extends Child {
   interest_earned_this_month: number;
-}
-
-interface PendingWithdrawal {
-  id: string;
-  childId: string;
-  childName: string;
-  amountCents: number;
-  description: string;
-  requestedAt: string;
 }
 
 export default function DashboardPage() {
@@ -33,7 +30,7 @@ export default function DashboardPage() {
   const [children, setChildren] = useState<ChildWithStats[]>([]);
   const [loading, setLoading] = useState(true);
   const [addChildOpen, setAddChildOpen] = useState(false);
-  const [pendingWithdrawals, setPendingWithdrawals] = useState<PendingWithdrawal[]>([]);
+  const [pendingActions, setPendingActions] = useState<PendingActionsData>(emptyPendingActions());
 
   const fetchChildren = useCallback(async () => {
     try {
@@ -49,15 +46,15 @@ export default function DashboardPage() {
     }
   }, []);
 
-  const fetchPendingWithdrawals = useCallback(async () => {
+  const fetchPendingActions = useCallback(async () => {
     try {
-      const res = await fetch('/api/pending-withdrawals');
+      const res = await fetch('/api/pending-actions');
       if (res.ok) {
         const data = await res.json();
-        setPendingWithdrawals(data.withdrawals || []);
+        setPendingActions(data);
       }
     } catch (error) {
-      console.error('Error fetching pending withdrawals:', error);
+      console.error('Error fetching pending actions:', error);
     }
   }, []);
 
@@ -66,9 +63,9 @@ export default function DashboardPage() {
       router.push('/login');
     } else if (status === 'authenticated') {
       fetchChildren();
-      fetchPendingWithdrawals();
+      fetchPendingActions();
     }
-  }, [status, router, fetchChildren, fetchPendingWithdrawals]);
+  }, [status, router, fetchChildren, fetchPendingActions]);
 
   const handleAddChild = async (data: { name: string; pin: string; interest_rate_daily: number }) => {
     const res = await fetch('/api/children', {
@@ -191,8 +188,8 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-        {/* Pending withdrawals alert */}
-        {pendingWithdrawals.length > 0 && (
+        {/* Pending actions alert — withdrawals, chores, donations */}
+        {pendingActions.total > 0 && (
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -200,19 +197,53 @@ export default function DashboardPage() {
           >
             <Card className="border-[#E67E22] bg-[#E67E22]/5">
               <CardContent className="pt-4">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="w-5 h-5 text-[#E67E22]" />
-                  <p className="text-[#2C3E50]">
-                    You have <span className="font-bold">{pendingWithdrawals.length}</span> pending withdrawal request{pendingWithdrawals.length !== 1 ? 's' : ''}
-                  </p>
-                  <Button 
-                    variant="secondary" 
-                    size="sm" 
-                    className="ml-auto"
-                    onClick={() => router.push('/dashboard/transactions')}
-                  >
-                    Review
-                  </Button>
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-[#E67E22] mt-0.5 shrink-0" />
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[#2C3E50] font-semibold mb-2">
+                      {pendingActions.total} item{pendingActions.total !== 1 ? 's' : ''} need{pendingActions.total === 1 ? 's' : ''} your review
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {pendingActions.withdrawals.length > 0 && (
+                        <button
+                          onClick={() => router.push(actionReviewPath('withdrawal'))}
+                          className="flex items-center gap-1.5 text-xs bg-[#E67E22]/10 hover:bg-[#E67E22]/20 text-[#E67E22] px-2.5 py-1.5 rounded-lg transition-colors font-medium"
+                        >
+                          <ArrowDownCircle className="w-3.5 h-3.5" />
+                          {pendingActions.withdrawals.length} withdrawal{pendingActions.withdrawals.length !== 1 ? 's' : ''}
+                        </button>
+                      )}
+                      {pendingActions.choreCompletions.length > 0 && (
+                        <button
+                          onClick={() => router.push(
+                            pendingActions.choreCompletions.length === 1
+                              ? actionReviewPath('chore_completion', pendingActions.choreCompletions[0].childId)
+                              : '/dashboard'
+                          )}
+                          className="flex items-center gap-1.5 text-xs bg-[#9B59B6]/10 hover:bg-[#9B59B6]/20 text-[#9B59B6] px-2.5 py-1.5 rounded-lg transition-colors font-medium"
+                        >
+                          <CheckSquare className="w-3.5 h-3.5" />
+                          {pendingActions.choreCompletions.length} chore{pendingActions.choreCompletions.length !== 1 ? 's' : ''}
+                        </button>
+                      )}
+                      {pendingActions.donations.length > 0 && (
+                        <button
+                          onClick={() => router.push(
+                            pendingActions.donations.length === 1
+                              ? actionReviewPath('donation', pendingActions.donations[0].childId)
+                              : '/dashboard'
+                          )}
+                          className="flex items-center gap-1.5 text-xs bg-[#E91E8C]/10 hover:bg-[#E91E8C]/20 text-[#E91E8C] px-2.5 py-1.5 rounded-lg transition-colors font-medium"
+                        >
+                          <Heart className="w-3.5 h-3.5" />
+                          {pendingActions.donations.length} donation{pendingActions.donations.length !== 1 ? 's' : ''}
+                        </button>
+                      )}
+                    </div>
+                    <p className="text-xs text-[#7F8C8D] mt-2">
+                      {pendingActionsSummary(pendingActions)} — tap to review
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
