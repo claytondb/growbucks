@@ -1,6 +1,6 @@
 # GrowBucks - Task List
 
-Last updated: 2026-03-09
+Last updated: 2026-03-19
 
 ## ✅ Completed
 
@@ -77,6 +77,7 @@ Last updated: 2026-03-09
 ### Advanced Features
 - [x] **Interest rate promotions** (2026-03-14) — parents create limited-time bonus rate windows; child-specific beats family-wide; highest bonus wins; 59 tests (008_promotions.sql migration)
 - [x] **Virtual jobs/chores system** (2026-03-14) — parents create chores with rewards, children submit completions, parents approve → earnings deposited; one_time vs recurring; full API with 68 tests (006_chores.sql migration)
+- [x] **ChoresManager UI** (2026-03-19) — `src/components/ChoresManager.tsx`; collapsible card on child detail page; emoji picker, create form, approve/reject pending completions with inline rejection reason; archive button; lazy data fetch on expand
 - [x] **Split savings** (2026-03-14) — parent sets 0–90% auto-save on each deposit; separate spend/save buckets displayed on child detail page; parent can release savings back to spending; savings_deposit + savings_release transaction types; 007_split_savings.sql migration (46 tests)
 - [x] **Charitable giving** (2026-03-16) — children propose donations to causes; parents approve or reject; approved pledges deduct from spend balance and create a `donation` transaction; giving milestones celebrate generosity; 51 tests (009_giving.sql migration)
 
@@ -96,7 +97,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.6.0
+- **Version:** 2.7.0
 - **Tests:** 706 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-19 — Monthly email digest system (36 tests); buildDigestEmail + sendMonthlyDigest + POST /api/email-digest
+- **Last nightly work:** 2026-03-19 — ChoresManager UI; collapsible parent card on child detail page; approve/reject completions; create/archive chores
