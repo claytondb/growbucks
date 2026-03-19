@@ -15,6 +15,7 @@ import {
   Sparkles,
   AlertCircle,
   Check,
+  ClipboardList,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -274,6 +275,38 @@ export default function ReportsPage() {
                   <span className="text-xs font-medium text-[#3498DB] shrink-0">Downloaded!</span>
                 )}
               </button>
+            </CardContent>
+          </Card>
+        </motion.div>
+
+        {/* Visual Statement */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.25 }}
+        >
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base flex items-center gap-2">
+                <ClipboardList className="w-4 h-4 text-[#7F8C8D]" />
+                Visual Statement
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <Link href={`/dashboard/reports/statement/${selectedYear}`}>
+                <button className="w-full flex items-center gap-4 p-4 rounded-xl border-2 border-[#ECF0F1] hover:border-[#9B59B6] hover:bg-[#9B59B6]/5 transition-all text-left">
+                  <div className="w-12 h-12 bg-[#9B59B6]/10 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <ClipboardList className="w-5 h-5 text-[#9B59B6]" />
+                  </div>
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#2C3E50]">View {selectedYear} Statement</p>
+                    <p className="text-sm text-[#7F8C8D]">
+                      Printable per-child breakdown with monthly table — great for tax records
+                    </p>
+                  </div>
+                  <span className="text-xs font-medium text-[#9B59B6] shrink-0">Open →</span>
+                </button>
+              </Link>
             </CardContent>
           </Card>
         </motion.div>
