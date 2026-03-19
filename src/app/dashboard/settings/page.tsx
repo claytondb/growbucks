@@ -15,6 +15,7 @@ import {
   Moon,
   Smartphone,
   RefreshCw,
+  FileBarChart,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -57,6 +58,12 @@ export default function SettingsPage() {
           label: 'Allowances',
           description: 'Set up recurring deposits for your kids',
           href: '/dashboard/allowances',
+        },
+        {
+          icon: FileBarChart,
+          label: 'Tax Reports',
+          description: 'Download annual interest & earnings summaries',
+          href: '/dashboard/reports',
         },
         {
           icon: Bell,
@@ -195,7 +202,7 @@ export default function SettingsPage() {
           className="mt-8 text-center"
         >
           <p className="text-sm text-[#BDC3C7]">
-            GrowBucks v1.0.0
+            GrowBucks v2.4.0
           </p>
           <p className="text-xs text-[#BDC3C7] mt-1">
             Teaching kids about money, one cent at a time.
