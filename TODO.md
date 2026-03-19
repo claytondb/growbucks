@@ -82,7 +82,7 @@ Last updated: 2026-03-09
 
 ### Reporting
 - [x] **Monthly summary utility + API** (2026-03-19) — `src/lib/monthly-summary.ts` + `GET /api/monthly-summary`; 12-month breakdown per child/family; foundation for email digests; 36 tests
-- [ ] Monthly summary emails (send digest via email — data layer done ✅)
+- [x] **Monthly summary emails** (2026-03-19) — `src/lib/email-digest.ts` + `POST /api/email-digest`; beautiful HTML + plain-text digest; dry-run mode; Resend integration; 36 tests
 - [ ] Year-end interest statement
 - [x] **Tax year export** (2026-03-14) — `GET /api/export/[year]`; JSON + CSV download; per-child monthly breakdown (interest, deposits, withdrawals, chore earnings, savings auto-deposits, starting/ending/peak balance); family totals; 58 tests
 
@@ -96,7 +96,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.5.0
-- **Tests:** 670 passing
+- **Version:** 2.6.0
+- **Tests:** 706 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-19 — Monthly summary utility + API (36 tests); foundation for email digests
+- **Last nightly work:** 2026-03-19 — Monthly email digest system (36 tests); buildDigestEmail + sendMonthlyDigest + POST /api/email-digest
