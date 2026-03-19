@@ -28,6 +28,7 @@ import { AchievementsGrid, calculateAchievements } from '@/components/Achievemen
 import FunFactCard from '@/components/FunFacts';
 import FinancialTip from '@/components/FinancialTip';
 import SplitSavingsCard from '@/components/SplitSavingsCard';
+import ChoresManager from '@/components/ChoresManager';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { LESSONS } from '@/lib/lessons';
 import { Child, Transaction } from '@/types/database';
@@ -371,6 +372,19 @@ export default function ChildDetailPage() {
               </>
             )}
           </Button>
+        </motion.div>
+
+        {/* Chores & Jobs — parent only */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+        >
+          <ChoresManager
+            childId={childId}
+            childName={child.name}
+            onEarningsChange={fetchChild}
+          />
         </motion.div>
 
         {/* Growth Chart with Projections */}
