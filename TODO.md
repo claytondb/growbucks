@@ -81,7 +81,8 @@ Last updated: 2026-03-09
 - [x] **Charitable giving** (2026-03-16) — children propose donations to causes; parents approve or reject; approved pledges deduct from spend balance and create a `donation` transaction; giving milestones celebrate generosity; 51 tests (009_giving.sql migration)
 
 ### Reporting
-- [ ] Monthly summary emails
+- [x] **Monthly summary utility + API** (2026-03-19) — `src/lib/monthly-summary.ts` + `GET /api/monthly-summary`; 12-month breakdown per child/family; foundation for email digests; 36 tests
+- [ ] Monthly summary emails (send digest via email — data layer done ✅)
 - [ ] Year-end interest statement
 - [x] **Tax year export** (2026-03-14) — `GET /api/export/[year]`; JSON + CSV download; per-child monthly breakdown (interest, deposits, withdrawals, chore earnings, savings auto-deposits, starting/ending/peak balance); family totals; 58 tests
 
@@ -95,7 +96,7 @@ Last updated: 2026-03-09
 
 ## 📊 Stats
 
-- **Version:** 2.4.0
-- **Tests:** 634 passing
+- **Version:** 2.5.0
+- **Tests:** 670 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-17 — Unified pending-actions API + smart dashboard alert with color-coded chips for withdrawals/chores/donations, 34 tests
+- **Last nightly work:** 2026-03-19 — Monthly summary utility + API (36 tests); foundation for email digests

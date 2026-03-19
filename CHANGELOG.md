@@ -2,6 +2,30 @@
 
 All notable changes to GrowBucks.
 
+## [2.5.0] - 2026-03-19
+
+### Added
+- **Monthly Summary utility** — `src/lib/monthly-summary.ts` — pure library for month-by-month financial breakdowns:
+  - `computeChildMonthlySummaries` — 12-month view per child with interest, deposits, savings auto-deposits, chore earnings, withdrawals, donations, savings rate, and running balance
+  - `computeFamilyMonthlySummary` — aggregates all children with family-wide totals
+  - `bestMonth` / `monthsAboveThreshold` — highlight helpers for "best month" badges and email callouts
+  - `runningBalances` — chart-ready array of `{ month, monthName, balanceCents }` for growth visualization
+  - `formatMonthlySummaryLine` — plain-text one-liner per month (foundation for future email digests)
+  - Balance propagation: months with no transactions carry forward the previous month's ending balance
+  - Filters out pending transactions and transactions from other years
+- **Monthly Summary API** — `GET /api/monthly-summary`:
+  - `?year=YYYY` query param (defaults to current year)
+  - `?child_id=<uuid>` to scope to a single child (returns `ChildMonthlySummaries`)
+  - Omit `child_id` for full family summary (`FamilyMonthlySummary`)
+  - Infers per-child starting balance from the last transaction before the year starts
+  - Parents only — child sessions receive 403
+
+### Tests
+- +36 new unit tests (`src/lib/monthly-summary.test.ts`)
+- Total: **670 tests** (was 634)
+
+---
+
 ## [2.4.0] - 2026-03-17
 
 ### Added
