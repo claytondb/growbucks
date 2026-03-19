@@ -65,9 +65,9 @@ Last updated: 2026-03-19
 ## 🎯 Future Enhancements
 
 ### Multiple Family Support
-- [ ] Grandparents can contribute
-- [ ] Family member invites
-- [ ] Gift deposits from relatives
+- [x] **Gift Links** (2026-03-19) — parents generate shareable links; relatives submit gifts (pending deposit); parent approves/rejects; full UI in GiftLinksManager.tsx; 55 tests
+- [ ] Gift history / total gifted summary per child
+- [ ] Email notification to parent when a gift is submitted
 
 ### Gamification
 - [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
@@ -97,7 +97,7 @@ Last updated: 2026-03-19
 
 ## 📊 Stats
 
-- **Version:** 2.7.0
-- **Tests:** 706 passing
+- **Version:** 2.8.0
+- **Tests:** 761 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-19 — ChoresManager UI; collapsible parent card on child detail page; approve/reject completions; create/archive chores
+- **Last nightly work:** 2026-03-19 — Gift Links system; shareable URLs for relatives to deposit money; pending approval flow; GiftLinksManager UI component; 55 new tests

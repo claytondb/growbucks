@@ -232,6 +232,16 @@ export interface Database {
         Insert: Omit<DonationPledge, 'id' | 'created_at'>;
         Update: Partial<Omit<DonationPledge, 'id'>>;
       };
+      gift_links: {
+        Row: import('@/lib/gift-links').GiftLink;
+        Insert: Omit<import('@/lib/gift-links').GiftLink, 'id' | 'created_at' | 'updated_at' | 'use_count'>;
+        Update: Partial<Omit<import('@/lib/gift-links').GiftLink, 'id'>>;
+      };
+      gift_link_redemptions: {
+        Row: import('@/lib/gift-links').GiftLinkRedemption;
+        Insert: Omit<import('@/lib/gift-links').GiftLinkRedemption, 'id' | 'redeemed_at'>;
+        Update: Partial<Omit<import('@/lib/gift-links').GiftLinkRedemption, 'id'>>;
+      };
     };
   };
 }

@@ -1,5 +1,25 @@
 # Changelog
 
+## [2.8.0] - 2026-03-19
+
+### Added
+- **Gift Links** — parents can generate shareable URLs for relatives to send money as gifts to a specific child:
+  - Parent creates a gift link with an optional label, welcome message, per-gift cap ($1–$1,000), max uses, and expiry date
+  - Shareable `/gift/[token]` page works for anyone — no login required for the giver
+  - Giver enters their name, an optional message, and an amount, then submits
+  - Gift becomes a **pending deposit** — money doesn't reach the child until the parent approves
+  - Parent reviews and approves or rejects from their dashboard (via `GiftLinksManager` collapsible card on the child detail page)
+  - One-click copy-to-clipboard and preview link open in new tab
+  - Toggle links active/inactive, or delete them entirely
+  - Tokens are 128-bit crypto-random (unguessable), stored in new `gift_links` + `gift_link_redemptions` tables (migration 010)
+  - `src/lib/gift-links.ts` — 55 unit tests covering validation, status, formatting, and sorting
+  - `src/app/api/gift-links/route.ts` — CRUD for parent (GET, POST, PATCH, DELETE)
+  - `src/app/api/gift-links/[token]/route.ts` — public GET (gift page info), POST (redeem), PATCH (parent approve/reject)
+  - `src/app/gift/[token]/page.tsx` — beautiful public gift-submission page with quick-amount buttons and success animation
+  - `src/components/GiftLinksManager.tsx` — collapsible card UI for the parent child detail page
+
+
+
 All notable changes to GrowBucks.
 
 ## [2.5.0] - 2026-03-19
