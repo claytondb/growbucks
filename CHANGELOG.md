@@ -1,5 +1,26 @@
 # Changelog
 
+## [2.9.0] - 2026-04-01
+
+### Added
+- **Gift Submission Email Notifications** — parents now receive an email the moment a relative submits a gift via a Gift Link:
+  - Beautiful HTML email with gift amount callout, giver name, optional message, and a "Review Gift →" CTA
+  - Plain-text fallback for email clients that prefer it
+  - Fire-and-forget delivery (no added latency to the gift submission response)
+  - Graceful dry-run mode when `RESEND_API_KEY` is not configured
+  - Configurable sender via `GIFT_NOTIFY_FROM_EMAIL` (falls back to `DIGEST_FROM_EMAIL`, then default)
+  - New `src/lib/gift-notification.ts` with `buildGiftNotificationEmail` (pure) and `sendGiftNotification` (sender)
+  - 30 unit tests covering email builder, HTML escaping, Resend integration, env-var fallback chain
+- **Gift History Summary** — new per-child aggregate helpers in `src/lib/gift-links.ts`:
+  - `computeGiftHistorySummary(redemptions)` — returns approved/pending/rejected counts and cent totals
+  - `formatGiftHistorySummary(summary)` — one-liner human-readable string (e.g. "3 gifts received ($75.00 total) • 1 pending")
+  - 18 unit tests
+
+### Why this matters
+Parents don't always have the dashboard open. Without a notification, a gift from Grandma could sit unreviewed for days. The email closes that loop immediately. The history helpers lay groundwork for a "Total received from family" stat on the child detail page.
+
+---
+
 ## [2.8.0] - 2026-03-19
 
 ### Added

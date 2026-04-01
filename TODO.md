@@ -66,8 +66,8 @@ Last updated: 2026-03-19
 
 ### Multiple Family Support
 - [x] **Gift Links** (2026-03-19) — parents generate shareable links; relatives submit gifts (pending deposit); parent approves/rejects; full UI in GiftLinksManager.tsx; 55 tests
-- [ ] Gift history / total gifted summary per child
-- [ ] Email notification to parent when a gift is submitted
+- [x] **Gift history / total gifted summary per child** (2026-04-01) — `computeGiftHistorySummary` + `formatGiftHistorySummary` helpers in gift-links.ts; 18 tests
+- [x] **Email notification to parent when a gift is submitted** (2026-04-01) — `gift-notification.ts` module; fire-and-forget Resend call in POST /api/gift-links/[token]; 30 tests
 
 ### Gamification
 - [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
@@ -97,7 +97,7 @@ Last updated: 2026-03-19
 
 ## 📊 Stats
 
-- **Version:** 2.8.0
-- **Tests:** 761 passing
+- **Version:** 2.9.0
+- **Tests:** 803 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-03-19 — Gift Links system; shareable URLs for relatives to deposit money; pending approval flow; GiftLinksManager UI component; 55 new tests
+- **Last nightly work:** 2026-04-01 — Gift submission email notifications; gift history summary helpers; 42 new tests
