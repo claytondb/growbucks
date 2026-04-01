@@ -13,6 +13,8 @@ import {
   sortRedemptions,
   countPendingRedemptions,
   totalApprovedGiftCents,
+  computeGiftHistorySummary,
+  formatGiftHistorySummary,
   redemptionStatusBadge,
   GIFT_MIN_CENTS,
   GIFT_MAX_CENTS,
@@ -430,5 +432,116 @@ describe('redemptionStatusBadge', () => {
   it('returns correct badge for rejected', () => {
     const badge = redemptionStatusBadge('rejected');
     expect(badge.emoji).toBe('❌');
+  });
+});
+
+// ─── computeGiftHistorySummary ────────────────────────────────────────────────
+
+describe('computeGiftHistorySummary', () => {
+  it('returns zeros for empty redemptions', () => {
+    const s = computeGiftHistorySummary([]);
+    expect(s.approvedCount).toBe(0);
+    expect(s.totalApprovedCents).toBe(0);
+    expect(s.pendingCount).toBe(0);
+    expect(s.totalPendingCents).toBe(0);
+    expect(s.rejectedCount).toBe(0);
+  });
+
+  it('counts approved redemptions and sums amounts', () => {
+    const redemptions = [
+      makeRedemption({ status: 'approved', amount_cents: 1000 }),
+      makeRedemption({ status: 'approved', amount_cents: 2500 }),
+    ];
+    const s = computeGiftHistorySummary(redemptions);
+    expect(s.approvedCount).toBe(2);
+    expect(s.totalApprovedCents).toBe(3500);
+  });
+
+  it('counts pending redemptions and sums amounts', () => {
+    const redemptions = [
+      makeRedemption({ status: 'pending', amount_cents: 500 }),
+      makeRedemption({ status: 'pending', amount_cents: 1500 }),
+    ];
+    const s = computeGiftHistorySummary(redemptions);
+    expect(s.pendingCount).toBe(2);
+    expect(s.totalPendingCents).toBe(2000);
+  });
+
+  it('counts rejected redemptions (no amount sum)', () => {
+    const redemptions = [
+      makeRedemption({ status: 'rejected', amount_cents: 750 }),
+      makeRedemption({ status: 'rejected', amount_cents: 1000 }),
+    ];
+    const s = computeGiftHistorySummary(redemptions);
+    expect(s.rejectedCount).toBe(2);
+  });
+
+  it('handles mixed statuses correctly', () => {
+    const redemptions = [
+      makeRedemption({ status: 'approved', amount_cents: 2000 }),
+      makeRedemption({ status: 'pending', amount_cents: 500 }),
+      makeRedemption({ status: 'rejected', amount_cents: 100 }),
+      makeRedemption({ status: 'approved', amount_cents: 3000 }),
+    ];
+    const s = computeGiftHistorySummary(redemptions);
+    expect(s.approvedCount).toBe(2);
+    expect(s.totalApprovedCents).toBe(5000);
+    expect(s.pendingCount).toBe(1);
+    expect(s.totalPendingCents).toBe(500);
+    expect(s.rejectedCount).toBe(1);
+  });
+});
+
+// ─── formatGiftHistorySummary ─────────────────────────────────────────────────
+
+describe('formatGiftHistorySummary', () => {
+  it('returns "No gifts yet" when no approved or pending gifts', () => {
+    const s = computeGiftHistorySummary([]);
+    expect(formatGiftHistorySummary(s)).toBe('No gifts yet');
+  });
+
+  it('shows approved count and amount', () => {
+    const s = computeGiftHistorySummary([
+      makeRedemption({ status: 'approved', amount_cents: 2500 }),
+      makeRedemption({ status: 'approved', amount_cents: 5000 }),
+    ]);
+    const text = formatGiftHistorySummary(s);
+    expect(text).toContain('2 gifts');
+    expect(text).toContain('$75.00');
+  });
+
+  it('uses singular "gift" for exactly 1 approved', () => {
+    const s = computeGiftHistorySummary([
+      makeRedemption({ status: 'approved', amount_cents: 1000 }),
+    ]);
+    const text = formatGiftHistorySummary(s);
+    expect(text).toContain('1 gift received');
+  });
+
+  it('shows pending count when pending gifts exist', () => {
+    const s = computeGiftHistorySummary([
+      makeRedemption({ status: 'pending', amount_cents: 500 }),
+      makeRedemption({ status: 'pending', amount_cents: 1500 }),
+    ]);
+    const text = formatGiftHistorySummary(s);
+    expect(text).toContain('2 pending');
+  });
+
+  it('combines approved and pending in one string', () => {
+    const s = computeGiftHistorySummary([
+      makeRedemption({ status: 'approved', amount_cents: 3000 }),
+      makeRedemption({ status: 'pending', amount_cents: 1000 }),
+    ]);
+    const text = formatGiftHistorySummary(s);
+    expect(text).toContain('1 gift received');
+    expect(text).toContain('1 pending');
+    expect(text).toContain('•');
+  });
+
+  it('ignores rejected-only gifts when showing "No gifts yet"', () => {
+    const s = computeGiftHistorySummary([
+      makeRedemption({ status: 'rejected', amount_cents: 1000 }),
+    ]);
+    expect(formatGiftHistorySummary(s)).toBe('No gifts yet');
   });
 });

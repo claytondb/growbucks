@@ -335,6 +335,83 @@ export function redemptionStatusBadge(status: RedemptionStatus): {
   }
 }
 
+// ─── Gift History ─────────────────────────────────────────────────────────────
+
+export interface GiftHistorySummary {
+  /** Total number of approved gifts across all links for this child */
+  approvedCount: number;
+  /** Total dollar value of approved gifts in cents */
+  totalApprovedCents: number;
+  /** Total number of pending gifts waiting for approval */
+  pendingCount: number;
+  /** Total dollar value of pending gifts in cents */
+  totalPendingCents: number;
+  /** Total number of rejected gifts */
+  rejectedCount: number;
+}
+
+/**
+ * Compute an aggregate gift history summary for a child.
+ *
+ * Pass redemptions from all gift links associated with the child.
+ * Useful for the "Total gifted" callout on the child detail page.
+ */
+export function computeGiftHistorySummary(
+  redemptions: GiftLinkRedemption[],
+): GiftHistorySummary {
+  let approvedCount = 0;
+  let totalApprovedCents = 0;
+  let pendingCount = 0;
+  let totalPendingCents = 0;
+  let rejectedCount = 0;
+
+  for (const r of redemptions) {
+    switch (r.status) {
+      case 'approved':
+        approvedCount++;
+        totalApprovedCents += r.amount_cents;
+        break;
+      case 'pending':
+        pendingCount++;
+        totalPendingCents += r.amount_cents;
+        break;
+      case 'rejected':
+        rejectedCount++;
+        break;
+    }
+  }
+
+  return { approvedCount, totalApprovedCents, pendingCount, totalPendingCents, rejectedCount };
+}
+
+/**
+ * Format a gift history summary as a human-readable one-liner.
+ *
+ * Examples:
+ *   "3 gifts received ($75.00 total)"
+ *   "1 gift received ($25.00 total) • 2 pending"
+ *   "No gifts yet"
+ */
+export function formatGiftHistorySummary(summary: GiftHistorySummary): string {
+  if (summary.approvedCount === 0 && summary.pendingCount === 0) {
+    return 'No gifts yet';
+  }
+
+  const parts: string[] = [];
+
+  if (summary.approvedCount > 0) {
+    const noun = summary.approvedCount === 1 ? 'gift' : 'gifts';
+    parts.push(`${summary.approvedCount} ${noun} received (${formatGiftAmount(summary.totalApprovedCents)} total)`);
+  }
+
+  if (summary.pendingCount > 0) {
+    const noun = summary.pendingCount === 1 ? 'pending' : 'pending';
+    parts.push(`${summary.pendingCount} ${noun}`);
+  }
+
+  return parts.join(' • ');
+}
+
 /**
  * Suggested gift link labels to get parents started quickly.
  */

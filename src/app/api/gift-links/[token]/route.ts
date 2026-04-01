@@ -9,6 +9,7 @@ import {
   sortRedemptions,
   type GiftLink,
 } from '@/lib/gift-links';
+import { sendGiftNotification } from '@/lib/gift-notification';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const getSupabase = () => createServerSupabaseClient() as any;
@@ -202,6 +203,35 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       updated_at: new Date().toISOString(),
     })
     .eq('id', link.id);
+
+  // Send email notification to parent (best-effort — don't fail the request)
+  try {
+    // Fetch parent's email and name
+    const { data: parentUser } = await supabase
+      .from('users')
+      .select('email, name')
+      .eq('id', child.user_id)
+      .single();
+
+    if (parentUser?.email) {
+      // Fire-and-forget: intentionally not awaited to keep response fast
+      sendGiftNotification({
+        parentEmail: parentUser.email,
+        parentName: parentUser.name ?? 'there',
+        childName: child.name,
+        amountCents: body.amount_cents,
+        giverName: body.giver_name,
+        giverMessage: body.giver_message ?? null,
+        linkLabel: link.label,
+        appBaseUrl: process.env.NEXT_PUBLIC_APP_URL,
+      }).catch((err) => {
+        console.error('[GiftNotification] Failed to send parent notification:', err);
+      });
+    }
+  } catch (err) {
+    // Never block the response if notification lookup/send fails
+    console.error('[GiftNotification] Unexpected error during notification setup:', err);
+  }
 
   return NextResponse.json(
     {
