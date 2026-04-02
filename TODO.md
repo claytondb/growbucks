@@ -68,6 +68,7 @@ Last updated: 2026-03-19
 - [x] **Gift Links** (2026-03-19) — parents generate shareable links; relatives submit gifts (pending deposit); parent approves/rejects; full UI in GiftLinksManager.tsx; 55 tests
 - [x] **Gift history / total gifted summary per child** (2026-04-01) — `computeGiftHistorySummary` + `formatGiftHistorySummary` helpers in gift-links.ts; 18 tests
 - [x] **Email notification to parent when a gift is submitted** (2026-04-01) — `gift-notification.ts` module; fire-and-forget Resend call in POST /api/gift-links/[token]; 30 tests
+- [x] **GiftLinksManager wired into child detail page** (2026-04-02) — component mounted after ChoresManager; gift history summary callout banner; `fetchGiftRedemptions` aggregates all redemptions for summary display
 
 ### Gamification
 - [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
@@ -100,4 +101,4 @@ Last updated: 2026-03-19
 - **Version:** 2.9.0
 - **Tests:** 803 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-04-01 — Gift submission email notifications; gift history summary helpers; 42 new tests
+- **Last nightly work:** 2026-04-02 — GiftLinksManager + gift history summary wired into child detail page (v2.10.0); 803 tests
