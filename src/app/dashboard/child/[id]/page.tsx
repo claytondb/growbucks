@@ -29,8 +29,14 @@ import FunFactCard from '@/components/FunFacts';
 import FinancialTip from '@/components/FinancialTip';
 import SplitSavingsCard from '@/components/SplitSavingsCard';
 import ChoresManager from '@/components/ChoresManager';
+import GiftLinksManager from '@/components/GiftLinksManager';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { LESSONS } from '@/lib/lessons';
+import {
+  computeGiftHistorySummary,
+  formatGiftHistorySummary,
+  type GiftLinkRedemption,
+} from '@/lib/gift-links';
 import { Child, Transaction } from '@/types/database';
 
 interface LessonProgressRow {
@@ -67,6 +73,7 @@ export default function ChildDetailPage() {
   const [celebrationMessage, setCelebrationMessage] = useState({ title: '', message: '' });
   const [lessonProgress, setLessonProgress] = useState<LessonProgressRow[]>([]);
   const [splitPercent, setSplitPercent] = useState(0);
+  const [giftRedemptions, setGiftRedemptions] = useState<GiftLinkRedemption[]>([]);
 
   const fetchChild = useCallback(async () => {
     try {
@@ -109,6 +116,35 @@ export default function ChildDetailPage() {
     }
   }, [childId]);
 
+  const fetchGiftRedemptions = useCallback(async () => {
+    try {
+      // Fetch all gift links for this child, then collect all their redemptions
+      const res = await fetch(`/api/gift-links?child_id=${childId}`);
+      if (!res.ok) return;
+      const { links } = await res.json();
+      if (!links?.length) return;
+
+      // Fetch redemptions for each link in parallel
+      const allRedemptions: GiftLinkRedemption[] = [];
+      await Promise.all(
+        (links as Array<{ token: string }>).map(async (link) => {
+          try {
+            const r = await fetch(`/api/gift-links/${link.token}?redemptions=true`);
+            if (r.ok) {
+              const d = await r.json();
+              if (d.redemptions) allRedemptions.push(...d.redemptions);
+            }
+          } catch {
+            // skip failed links
+          }
+        })
+      );
+      setGiftRedemptions(allRedemptions);
+    } catch {
+      // Non-critical — gift history simply won't show
+    }
+  }, [childId]);
+
   // Record activity for streak tracking when a child views their own page
   useEffect(() => {
     if (status === 'authenticated' && session?.user?.isChild) {
@@ -123,8 +159,12 @@ export default function ChildDetailPage() {
     } else if (status === 'authenticated') {
       fetchChild();
       fetchLessonProgress();
+      // Only fetch gift data for parents (children see their own page but don't manage gifts)
+      if (!session?.user?.isChild) {
+        fetchGiftRedemptions();
+      }
     }
-  }, [status, router, fetchChild, fetchLessonProgress]);
+  }, [status, router, fetchChild, fetchLessonProgress, fetchGiftRedemptions, session?.user?.isChild]);
 
   // Real-time balance animation
   useEffect(() => {
@@ -386,6 +426,41 @@ export default function ChildDetailPage() {
             onEarningsChange={fetchChild}
           />
         </motion.div>
+
+        {/* Gift Links — parent only */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.17 }}
+        >
+          <GiftLinksManager
+            childId={childId}
+            childName={child.name}
+          />
+        </motion.div>
+
+        {/* Gift History Summary — show if there are any gifts */}
+        {giftRedemptions.length > 0 && (() => {
+          const summary = computeGiftHistorySummary(giftRedemptions);
+          const summaryText = formatGiftHistorySummary(summary);
+          if (summaryText === 'No gifts yet') return null;
+          return (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.18 }}
+              className="mb-6"
+            >
+              <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-[#9B59B6]/10 border border-[#9B59B6]/20">
+                <span className="text-2xl">🎁</span>
+                <div>
+                  <p className="text-sm font-semibold text-[#9B59B6]">Family Gifts</p>
+                  <p className="text-sm text-[#7F8C8D]">{summaryText}</p>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })()}
 
         {/* Growth Chart with Projections */}
         <motion.div
