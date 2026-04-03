@@ -73,7 +73,7 @@ Last updated: 2026-03-19
 ### Gamification
 - [x] **Streak tracking** (2026-03-14) — consecutive login days via child_activity; Week Warrior achievement now uses real streak count
 - [x] **Sibling leaderboard** (2026-03-14) — 4 categories (balance, interest, savings rate, growth %); ranked with medals 🥇🥈🥉; tie detection; animated tabbed UI on parent dashboard; 29 tests
-- [ ] Seasonal challenges
+- [x] **Seasonal challenges** (2026-04-03) — `seasonal-challenges.ts`; 5 types, 8 built-in seasonal windows, progress evaluators, status engine; 89 tests
 
 ### Advanced Features
 - [x] **Interest rate promotions** (2026-03-14) — parents create limited-time bonus rate windows; child-specific beats family-wide; highest bonus wins; 59 tests (008_promotions.sql migration)
@@ -98,7 +98,7 @@ Last updated: 2026-03-19
 
 ## 📊 Stats
 
-- **Version:** 2.9.0
-- **Tests:** 803 passing
+- **Version:** 2.11.0
+- **Tests:** 892 passing
 - **Build:** Clean ✅ (zero TS errors)
-- **Last nightly work:** 2026-04-02 — GiftLinksManager + gift history summary wired into child detail page (v2.10.0); 803 tests
+- **Last nightly work:** 2026-04-03 — Seasonal challenges system (v2.11.0); 892 tests
