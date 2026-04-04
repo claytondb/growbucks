@@ -30,6 +30,7 @@ import FinancialTip from '@/components/FinancialTip';
 import SplitSavingsCard from '@/components/SplitSavingsCard';
 import ChoresManager from '@/components/ChoresManager';
 import GiftLinksManager from '@/components/GiftLinksManager';
+import SeasonalChallengesCard from '@/components/SeasonalChallengesCard';
 import { formatMoney, formatPercent, getDisplayBalance } from '@/lib/utils';
 import { LESSONS } from '@/lib/lessons';
 import {
@@ -461,6 +462,20 @@ export default function ChildDetailPage() {
             </motion.div>
           );
         })()}
+
+        {/* Seasonal Challenges */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.19 }}
+        >
+          <SeasonalChallengesCard
+            childId={childId}
+            childName={child.name}
+            balanceCents={child.balance_cents}
+            transactions={child.transactions}
+          />
+        </motion.div>
 
         {/* Growth Chart with Projections */}
         <motion.div
