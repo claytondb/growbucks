@@ -40,6 +40,7 @@ export async function GET() {
       withdrawals_push: true,
       goals_email: true,
       goals_push: false,
+      monthly_digest_email: true,
       quiet_hours_enabled: false,
       quiet_hours_start: '21:00',
       quiet_hours_end: '07:00',
@@ -72,6 +73,7 @@ export async function PUT(request: Request) {
       'deposits_email', 'deposits_push',
       'withdrawals_email', 'withdrawals_push',
       'goals_email', 'goals_push',
+      'monthly_digest_email',
       'quiet_hours_enabled', 'quiet_hours_start', 'quiet_hours_end',
     ];
 

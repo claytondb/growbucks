@@ -4,7 +4,7 @@ import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { Bell, Mail, Smartphone, TrendingUp, PiggyBank, Target, ToggleLeft, ToggleRight, CheckCircle } from 'lucide-react';
+import { Bell, Mail, Smartphone, TrendingUp, PiggyBank, Target, Calendar, ToggleLeft, ToggleRight, CheckCircle } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 interface NotificationSetting {
@@ -28,6 +28,7 @@ interface SavedSettings {
   withdrawals_push?: boolean;
   goals_email?: boolean;
   goals_push?: boolean;
+  monthly_digest_email?: boolean;
   quiet_hours_enabled?: boolean;
   quiet_hours_start?: string;
   quiet_hours_end?: string;
@@ -48,6 +49,7 @@ export default function NotificationsPage() {
   const [saved, setSaved] = useState(false);
   const [emailEnabled, setEmailEnabled] = useState(true);
   const [pushEnabled, setPushEnabled] = useState(true);
+  const [monthlyDigestEnabled, setMonthlyDigestEnabled] = useState(true);
   const [quietHours, setQuietHours] = useState(false);
   const [quietHoursStart, setQuietHoursStart] = useState('21:00');
   const [quietHoursEnd, setQuietHoursEnd] = useState('07:00');
@@ -103,6 +105,7 @@ export default function NotificationsPage() {
             setQuietHours(s.quiet_hours_enabled ?? false);
             setQuietHoursStart(s.quiet_hours_start ?? '21:00');
             setQuietHoursEnd(s.quiet_hours_end ?? '07:00');
+            setMonthlyDigestEnabled(s.monthly_digest_email ?? true);
             setSettings(prev => prev.map(setting => ({
               ...setting,
               emailEnabled: s[`${setting.id}_email` as keyof SavedSettings] as boolean ?? setting.emailEnabled,
@@ -152,6 +155,12 @@ export default function NotificationsPage() {
       }
       return s;
     }));
+  };
+
+  const toggleMonthlyDigest = () => {
+    const newValue = !monthlyDigestEnabled;
+    setMonthlyDigestEnabled(newValue);
+    saveSettings({ monthly_digest_email: newValue });
   };
 
   const toggleGlobalEmail = () => {
@@ -309,6 +318,32 @@ export default function NotificationsPage() {
                 </div>
               </motion.div>
             ))}
+          </CardContent>
+        </Card>
+
+        {/* Monthly Digest */}
+        <Card className="mt-6">
+          <CardHeader>
+            <CardTitle className="text-lg">Monthly Summary Email</CardTitle>
+            <CardDescription>Receive a monthly family finance digest in your inbox</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="flex items-center justify-between p-4 bg-[#F8FAFE] rounded-xl">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-[#9B59B6]/10 rounded-xl flex items-center justify-center">
+                  <Calendar className="w-5 h-5 text-[#9B59B6]" />
+                </div>
+                <div>
+                  <p className="font-medium text-[#2C3E50]">Monthly Digest Email</p>
+                  <p className="text-sm text-[#7F8C8D]">
+                    A summary of each child&apos;s interest, deposits, and activity — sent on the 1st of every month
+                  </p>
+                </div>
+              </div>
+              <button onClick={toggleMonthlyDigest} className={monthlyDigestEnabled ? "text-[#2ECC71]" : "text-[#7F8C8D]"}>
+                {monthlyDigestEnabled ? <ToggleRight className="w-8 h-8" /> : <ToggleLeft className="w-8 h-8" />}
+              </button>
+            </div>
           </CardContent>
         </Card>
 
