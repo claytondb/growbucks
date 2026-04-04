@@ -36,7 +36,7 @@ Last updated: 2026-03-19
 **Priority:** MEDIUM
 
 - [ ] Push notifications for interest earned
-- [ ] Email digest option for parents
+- [x] **Email digest option for parents** (2026-04-04) — monthly_digest_email toggle wired into notification settings page + API
 - [x] **In-app notification center improvements** (2026-03-12) - Added Unread/History tabs, read state indicators
 
 ### 2. Recurring Deposits ✅ DONE (2026-03-06)
@@ -85,7 +85,7 @@ Last updated: 2026-03-19
 ### Reporting
 - [x] **Monthly summary utility + API** (2026-03-19) — `src/lib/monthly-summary.ts` + `GET /api/monthly-summary`; 12-month breakdown per child/family; foundation for email digests; 36 tests
 - [x] **Monthly summary emails** (2026-03-19) — `src/lib/email-digest.ts` + `POST /api/email-digest`; beautiful HTML + plain-text digest; dry-run mode; Resend integration; 36 tests
-- [ ] Year-end interest statement
+- [x] **Year-end interest statement** (completed) — /dashboard/reports/statement/[year] printable page + CSV/JSON export via /api/export/[year]
 - [x] **Tax year export** (2026-03-14) — `GET /api/export/[year]`; JSON + CSV download; per-child monthly breakdown (interest, deposits, withdrawals, chore earnings, savings auto-deposits, starting/ending/peak balance); family totals; 58 tests
 
 ---
